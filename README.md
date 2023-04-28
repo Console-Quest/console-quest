@@ -93,6 +93,11 @@
 
 ## Group Ideas
 
+1. Console Quest
+  - A text-based dungeon crawler rpg with rogue-like elemnents. The user will traverse through a text-based dungeon, encountering random monsters and will have to fight to survive. Extra components involve an item system, stat system, XP system and combat system.
+2. Adopt A Kitten
+  - An app geared towards adoption agencies to easily and conviently list new kittens available for adoption. Given two user roles, Admin and User, admin will have write permissions while User has only read. Essentially, this will act as a go-between for adoption agencies to offer kittens.
+
 
 ****
 

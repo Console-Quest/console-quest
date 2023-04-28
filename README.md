@@ -99,8 +99,8 @@
 
 ## Tools 
 
-1. [GitHub]()
-2. [Presentation Deck]()
-3. [Invision (User Stories & UML]()
-4. [Trello]()
-5. []()
+1. [Project Repository](https://github.com/Console-Quest/console-quest)
+2. [Presentation Deck](https://docs.google.com/presentation/d/1NeXKKEpjK2DDme8EwlZBsJndUqIgGYzWrY6FAYtNTf0/edit#slide=id.g2accd1c413_3_31)
+3. [Invision UML(https://anthonykeith287645.invisionapp.com/freehand/Untitled-3Z3lA8HpI?dsid_h=7c2fba69e0efbaa7[…]d2f32660f5f5e7cc93adc7fba919060a0d62ea3b32e040f9729)
+4. [Trello](https://trello.com/b/EgH22Rsc/consolequest)
+5. [User Stories](https://docs.google.com/document/d/1jpRZoqDT-QW-chV5fTGVLyguo6j2UDzcPhPlaLT0F6E/edit)

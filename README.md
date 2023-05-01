@@ -1,5 +1,14 @@
 # Console Quest
+ 
+Console Quest is a roguelike infinite room game that runs on the MERN stack. The game uses the Socket.IO library to handle actions and provide real-time updates to the game state.
 
+The server-side code sets up a Socket.IO server and listens for client connections. When a client connects, the server creates a new game instance and assigns the client to it. The game state is stored on the server using MongoDB.
+
+The game is played by navigating through randomly generated rooms, battling enemies, and collecting items. Each room is procedurally generated, ensuring that no two playthroughs are the same.
+
+The client-side code displays the game world and handles player input. When the player performs an action, such as moving or attacking, the client sends a message to the server via the Socket.IO connection. The server updates the game state and sends a message back to the client with any changes.
+
+To run the game, first install the required dependencies by running npm install in the project directory. Then, start the server by running npm start. The client can be accessed by navigating to http://localhost:3000 in a web browser.
 
 ****
 

@@ -1,19 +1,16 @@
-// randomly generates a room from pool of possible rooms -> each room populates itself via component
-'use strict';
-
-import healingRoom from './healingRoom';
-import monsterRoom from './monsterRoom';
-import treasureRoom from './treasureRoom';
+import HealingRoom from './healingRoom.js';
+import { Monster } from './monsterRoom.js';
+import TreasureRoom from './treasureRoom.js';
 
 let lastHealingRoom = null;
 let healingRoomCounter = 0;
 
-function getNextRoom() {
+function getNextRoom(playerObj) {
   // Define an array of rooms with corresponding probabilities.
   const rooms = [
-    { type: "monsterRoom", room: monsterRoom, probability: 0.6 },
-    { type: "healingRoom", room: healingRoom, probability: 0.2 },
-    { type: "treasureRoom", room: treasureRoom, probability: 0.2 }
+    { type: "monsterRoom", room: () => new Monster(playerObj), probability: 0.6 },
+    { type: "healingRoom", room: () => new HealingRoom(playerObj), probability: 0.2 },
+    { type: "treasureRoom", room: () => new TreasureRoom(playerObj), probability: 0.2 }
   ];
 
   // Check if the player hasn't encountered a healing room in the last few rooms.
@@ -33,8 +30,8 @@ function getNextRoom() {
   for (let i = 0; i < rooms.length; i++) {
     randomValue -= rooms[i].probability;
     if (randomValue <= 0) {
-      const selectedRoom = rooms[i].type === "healingRoom" ? "healingRoom" : rooms[i].room;
-      if (selectedRoom === "healingRoom") {
+      const selectedRoom = rooms[i].room();
+      if (selectedRoom instanceof HealingRoom) {
         // Update the lastHealingRoom variable and reset the counter.
         lastHealingRoom = "healingRoom";
         healingRoomCounter = 0;
@@ -46,3 +43,5 @@ function getNextRoom() {
     }
   }
 }
+
+export default getNextRoom;

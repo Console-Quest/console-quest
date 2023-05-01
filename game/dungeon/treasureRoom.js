@@ -34,4 +34,4 @@ class TreasureRoom {
       return playerObj;
     }
   }
-  
+export default TreasureRoom;

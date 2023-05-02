@@ -9,7 +9,6 @@ const ORG = process.env.ORG
 import { Configuration, OpenAIApi } from "openai";
 const configuration = new Configuration({
     organization: `${ORG}`,
-    // Not sure this works, have to figure out how to use template literals
     apiKey: `${KEY}`,
 });
 const openai = new OpenAIApi(configuration);

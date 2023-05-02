@@ -1,0 +1,1 @@
+// generate instance of healing room

@@ -1,37 +1,60 @@
+import player from './choiceRoom';
+
 class TreasureRoom {
-    constructor(playerObj) {
-      this.type = "treasureRoom";
-      this.name = "Treasure Room";
-      this.probability = 30;
-      this.boosts = ["health", "damage"];
-      this.item = this.getRandomItem(playerObj.currentLevel);
+    constructor() {
+      this.buffs = [
+        { type: 'health', value: 5, response: 'You found a Constitution Buff! Health increased by' },
+        { type: 'minDmg', value: 1, response: 'You found a Swift Buff! Minimum Damage increased by' },
+        { type: 'maxDmg', value: 1.5, response: 'You found a Power Buff! Maximum Damage increased by' },
+        { type: 'critChance', value: 0.05, response: 'You found a Accuracy Buff! Critical Chance increased by' },
+        { type: 'critDmg', value: 0.25, response: 'You found a Deadly Buff! Critical Damage increased by' },
+      ]
     }
-  
-    getRandomItem(level) {
-      // Get a random boost type and calculate the amount of the boost based on the player's level.
-      const boostType = this.boosts[Math.floor(Math.random() * this.boosts.length)];
-      let boostAmount;
-      if (boostType === "health") {
-        boostAmount = Math.ceil(level * 2.5);
-      } else {
-        boostAmount = Math.ceil(level * 1.5);
-      }
-  
-      return { type: boostType, amount: boostAmount };
-    }
-  
-    collectItem(playerObj) {
-      // Apply the boost to the player's stats.
-      if (this.item.type === "health") {
-        playerObj.health += this.item.amount;
-        console.log("You found a health boost and recovered " + this.item.amount + " health. You now have " + playerObj.health + " health.");
-      } else {
-        playerObj.minDamage += this.item.amount;
-        playerObj.maxDamage += this.item.amount;
-        console.log("You found a damage boost and increased your minimum and maximum damage by " + this.item.amount + ".");
-      }
-  
-      return playerObj;
+
+
+    getRandomBuff = () => {
+        this.player = new player(player);
+
+        // Choose a random buff from buff objects
+        let newBuff = buffs[Math.floor(Math.random() * buffs.length)];
+
+        // Check current level of player -> use this as multiplier
+            let multiplier = this.player.curLvl <= 10 ? 1 
+            : this.player.curLvl <= 20 ? 2  
+            : this.player.curLvl <= 30 ? 3 
+            : this.player.curLvl <= 40 ? 4 
+            : 5;
+            
+        // Multiply buff value by level multiplier
+        let buffVal = newBuff.value * multiplier; 
+
+        // Determine type of buff and return appropriate response
+        let responseVal;
+        switch(newBuff) {
+            case 'health':
+                this.player.maxHealth += buffVal;
+                responseVal = `${newBuff.response} ${buffVal}. Max Health is now ${this.player.maxHealth}!`;
+                break;
+            case 'minDmg':
+                this.player.minDmg += buffVal;
+                responseVal = `${newBuff.response} ${buffVal}. Minimum Damage is now ${this.player.minDmg}!`;
+                break;
+            case 'maxDmg':
+                this.player.maxDmg += buffVal;
+                responseVal = `${newBuff.response} ${buffVal}. Maximum Damage is now ${this.player.maxDmg}!`;
+                break;
+            case 'critChance':
+                this.player.critChance += buffVal;
+                responseVal = `${newBuff.response} ${buffVal}. Critical Chance is now ${this.player.critChance}!`;
+                break;
+            case 'critDmg':
+                this.player.critDmg += buffVal;
+                responseVal = `${newBuff.response} ${buffVal}. Critical Damage is now ${this.player.critDmg}!`;
+                break;
+        }
+        console.log(responseVal);
+        return this.player;
     }
   }
   
+module.exports = TreasureRoom;

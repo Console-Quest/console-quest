@@ -14,8 +14,8 @@ class Character {
     }
 
    getPlayerDmg = () => {
-        let baseDamage = Math.floor(Math.random() * (this.dmgMax - this.dmgMin + 1) + this.dmgMin);
-        return Math.random() >= 1 - this.critChance ? baseDamage *= this.critDmg : baseDamage;
+        let baseDamage = Math.random() * (this.dmgMax - this.dmgMin + 1) + this.dmgMin;
+        return Math.random() >= 1 - this.critChance ? Math.ceil(baseDamage *= this.critDmg) : Math.floor(baseDamage);
     }
 }
 

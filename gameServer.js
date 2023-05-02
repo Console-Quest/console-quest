@@ -5,7 +5,7 @@ const KEY = process.env.OPENAI_API_KEY
 
 import { Configuration, OpenAIApi } from "openai";
 const configuration = new Configuration({
-    organization: "org-D3fgYbzDftFxkybTFSYwhUwE",
+    organization: "YOUR_ORGANIZATION_AS_A_STRING_HERE",
     // Not sure this works, have to figure out how to use template literals
     apiKey: `${KEY}`,
 });

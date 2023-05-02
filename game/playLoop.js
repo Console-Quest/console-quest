@@ -31,11 +31,9 @@ class GameLoop {
     play = (player) => {
        player.curHealth <= 0 ? playerDeath(player) : console.log('You enter a room. Before you lay two doors, one on the left, and one on the right. Which door do you choode?');
         // Get user response here
-        getRoom(player),
+        getRoom(player);
         play(player); 
     }
-
-    
 }
 
 const playerDeath = (player) => {

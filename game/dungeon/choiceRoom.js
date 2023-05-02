@@ -13,7 +13,7 @@ function getNextRoom() {
   const rooms = [
     { type: "monsterRoom", room: monsterRoom, probability: 0.6 },
     { type: "healingRoom", room: healingRoom, probability: 0.2 },
-    { type: "treasureRoom", room: treasureRoom, probability: 0.2 }
+    { type: "treasureRoom", room: treasureRoom, probability: 0.2 },
   ];
 
   // Check if the player hasn't encountered a healing room in the last few rooms.

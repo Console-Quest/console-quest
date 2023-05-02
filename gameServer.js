@@ -7,8 +7,18 @@ const KEY = process.env.OPENAI_API_KEY
 const ORG = process.env.ORG
 
 const io = new Server(PORT);
+
 io.on("connection", (socket) => {
-  console.log(socket.id); 
+  console.log('New client connected');
+  
+  socket.on('userInput', (data) => {
+    console.log(`Received user input: ${data}`);
+    // do something with the user's input
+  });
+  
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
 });
 
 // import { Configuration, OpenAIApi } from "openai";

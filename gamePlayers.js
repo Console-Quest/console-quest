@@ -1,5 +1,5 @@
 'use strict';
-const { io } = require('socket.io-client');
+import io from 'socket.io-client';
 const SERVER_URL = process.env.SERVER_URL || 'http://localhost:3001';
 const socket = io(SERVER_URL);
 
@@ -11,5 +11,7 @@ socket.on('connect', () => {
 socket.on('disconnect', () => {
   console.log('Disconnected from server');
 });
+
+console.log('test');
 
 

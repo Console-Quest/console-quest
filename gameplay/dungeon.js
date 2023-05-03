@@ -3,7 +3,8 @@ const { Rooms } = require("./rooms");
 
 // Define the Dungeon class
 class Dungeon {
-  constructor() {
+  constructor(getCompletionFunction) {
+    this.getCompletion = getCompletionFunction;
     this.level = 1; // Initialize the level property to 1
     this.healingRoomChance = 0.01; // Initialize the healing room chance property to 0.01
     this.treasureRoomChance = 0.4; // Initialize the treasure room chance property to 0.4
@@ -20,11 +21,13 @@ class Dungeon {
     this.healingRoomChance = this.defaultHealingRoomChance; // Set the healing room chance property back to its default value
   }
 
-  createNewRoom(player) {
+  async createNewRoom(player, socket) {
     let roomType;
+    let messageToSend = 'You search for a new room ahead'
+    // let searchRoomMessage = await this.getCompletion(messageToSend);
 
-    // Generate a new room type that is different from the previous one
-    console.log('You search for a new room ahead \n')
+    // Generate a new room type that is differ'nt from the previous one
+    console.log(`${messageToSend} \n`)
     do {
       const probability = Math.random();
       if (probability < this.healingRoomChance) {
@@ -39,7 +42,7 @@ class Dungeon {
     } while (roomType === this.previousRoomType) // Repeat the loop until the room type is different from the previous room type
 
     const room = new Rooms(roomType, this.level); // Create a new instance of the Rooms class with the generated room type and the current level
-    room.useAbility(player); // Use the room's ability on the player
+    room.useAbility(player, socket); // Use the room's ability on the player
     this.levelUp(); // Increase the level property by 1
 
     this.previousRoomType = roomType; // Set the previous room type to the current room type

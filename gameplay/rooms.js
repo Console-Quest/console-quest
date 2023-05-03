@@ -15,9 +15,12 @@ class Rooms {
   }
 
   // Define a method called useAbility that takes a player object as a parameter
-  useAbility(player) {
+  useAbility(player, socket) {
     // Log a message indicating that the ability is being used
-    console.log(`You discovered a ${this.roomType} room...\n`);
+    socket.emit('message', `You discovered a ${this.roomType} room...\n`);
+    // if(this.roomType === 'monster'){
+    //   socket.emit('message', monster.description);
+    // }
 
     // If the room type is a healing room, restore some of the player's missing health
     if (this.roomType === 'healing') {
@@ -27,8 +30,8 @@ class Rooms {
       const restoreHp = Math.floor(missingHp / 2);
       player.hp += restoreHp;
       // Log a message indicating how much health was restored
-      console.log(`Restored ${restoreHp} HP to player ${player.name}.\n`);
-      console.log(`${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP\n`)
+      socket.emit('message', `Restored ${restoreHp} HP to player ${player.name}.\n`);
+      socket.emit('message', `${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP\n`)
 
     }
 
@@ -52,8 +55,8 @@ const value = randomBuff.value;
 player[property] += value * player[property];
 
 // Log a message indicating the buff
-console.log(`Increased ${player.name}'s ${property} by ${value * 100}%.`);
-console.log(); // Add a blank line for spacing
+socket.emit('message', `Increased ${player.name}'s ${property} by ${value * 100}%.`);
+ // Add a blank line for spacing
 
 
       // If the room type is a monster room, create a new enemy and have it fight the player
@@ -81,16 +84,17 @@ console.log(); // Add a blank line for spacing
       const randomCreature = monsterTypes[Math.floor(Math.random() * monsterTypes.length)]
 
       // Create the enemy object using the selected creature's stats
-      const monster = new Enemy(enemyHp, randomCreature.type, enemyDmg)
+      const monster = new Enemy(enemyHp, randomCreature.type, enemyDmg, randomCreature.description)
+      socket.emit('message', monster.description);
 
-      console.log('You begin combat\n')
+      socket.emit('message', 'You begin combat\n')
       do {
-        console.log(`${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP\n`)
-        console.log(`${monster.name}: ${monster.createHealthBar(monster.maxHp)} ${monster.hp}/${monster.maxHp} HP\n`)
+        socket.emit('message', `${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP\n`)
+        socket.emit('message', `${monster.name}: ${monster.createHealthBar(monster.maxHp)} ${monster.hp}/${monster.maxHp} HP\n`)
         // Begin combat
         player.attackEnemy(monster)
         if (monster.hp < 0) {
-          console.log('You slain the monster\n')
+          socket.emit('message', `You slain the`+(monster.name)+'\n')
           continue;
         }
         monster.attackEnemy(player)

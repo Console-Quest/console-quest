@@ -12,19 +12,7 @@ class Character {
 
   // Define a takeDamage method that reduces the character's hit points by the given amount of damage
 
-  // Define a createHealthBar method that takes a length parameter and returns a health bar string
-  createHealthBar(length) {
-    if (this.hp <= 0) {
-      return '░'.repeat(length); // return an empty health bar
-    }
 
-    const filledLength = Math.round((this.hp / this.maxHp) * length);
-    const filledBar = '█'.repeat(filledLength);
-    const emptyBar = '░'.repeat(length - filledLength);
-    const healthBar = filledBar + emptyBar;
-
-    return healthBar;
-  }
 }
 
 // Define a Player class that extends the Character class
@@ -63,6 +51,20 @@ class Player extends Character {
     this.hp -= damage
   }
 
+  // Define a createHealthBar method that takes a length parameter and returns a health bar string
+  createHealthBar(length) {
+    if (this.hp <= 0) {
+      return '░'.repeat(length); // return an empty health bar
+    }
+
+    const filledLength = Math.round((this.hp / this.maxHp) * length);
+    const filledBar = '█'.repeat(filledLength);
+    const emptyBar = '░'.repeat(length - filledLength);
+    const healthBar = filledBar + emptyBar;
+
+    return healthBar;
+  }
+
   checkForDead() {
     if (this.hp === 0) {
       return true;
@@ -91,7 +93,7 @@ class Enemy extends Character {
     console.log(`${this.name} attacked ${enemy.name} for ${damage} damage!`);
     super.attack(enemy, damage);
   }
-  
+
 
   // Define a checkForDead method that returns true if the enemy's hit points are less than or equal to zero
   checkForDead() {
@@ -105,7 +107,7 @@ class Enemy extends Character {
 
 // Export the Enemy and Player classes
 module.exports = {
-   Enemy: Enemy, 
-   Player: Player 
-  };
+  Enemy: Enemy,
+  Player: Player
+};
 

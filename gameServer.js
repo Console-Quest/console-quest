@@ -11,12 +11,18 @@ const ORG = process.env.ORG
 const { Dungeon } = require('./gameplay/dungeon.js');
 const { Player, Enemy } = require('./gameplay/characters.js');
 
-const dungeon = new Dungeon();
-let player = new Player(10, 'VnGChrome', 'human');
 
-for (let i = 0; i < 20; i++){
-  dungeon.createNewRoom(player);
+let player = new Player(10, 'VnGChrome', 'human');
+const runGame = (player) => {
+
+  const dungeon = new Dungeon();
+
+  for (let i = 0; i < 20; i++){
+    dungeon.createNewRoom(player);
+  }
 }
+
+runGame(player)
 
 
 

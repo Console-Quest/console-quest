@@ -52,6 +52,7 @@ class Rooms {
       // Begin combat
       console.log('fight happens here')
       player.takeDamage(2)
+      console.log(player.createHealthBar(player.maxHp))
       console.log(`player has ${player.hp} remaining`)
   
       // If the player is dead, log a message indicating that the player lost

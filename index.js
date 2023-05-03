@@ -59,6 +59,7 @@ class Player extends Character {
     } else {
       this.attack(enemy, damage);
     }
+    console.log(`You attacked with ${attackType}`)
   }
 
   castSpell(enemies) {
@@ -107,35 +108,42 @@ class Enemy extends Character {
 
 class Goblin extends Enemy {
   constructor() {
-    super(30, 6, 0.1); // Lower HP, moderate attack strength, low magic resistance
+    super(30, 6, 0.1);
+    this.species = 'goblin' // Lower HP, moderate attack strength, low magic resistance
   }
 
   describe() {
-    return "A sneaky Goblin appears, with sharp teeth and a rusty dagger!";
+    console.log('where are you spider man?')
   }
 }
 
 class Skeleton extends Enemy {
   constructor() {
-    super(40, 4, 0.3); // Moderate HP, weak attack strength, moderate magic resistance
+    super(40, 4, 0.3);
+    this.species = 'skeleton' // Moderate HP, weak attack strength, moderate magic resistance
   }
 
   describe() {
-    return "An eerie Skeleton emerges, wielding a cracked sword and a tattered shield!";
+    console.log('a scary skeleton approaches')
   }
 }
 
 class Ogre extends Enemy {
   constructor() {
-    super(60, 10, 0.2); // Higher HP, strong attack strength, slightly higher magic resistance
+    super(60, 10, 0.2);
+    this.species = 'ogre' // Higher HP, strong attack strength, slightly higher magic resistance
   }
 
   describe() {
-    return "A massive Ogre lumbers forward, brandishing a large club and growling menacingly!";
+    console.log('A Scary Ogre Appears')
   }
 }
 
 function createHealthBar(currentHp, maxHp, length) {
+  if (currentHp <= 0) {
+    return '░'.repeat(length); // return an empty health bar
+  }
+
   const filledLength = Math.round((currentHp / maxHp) * length);
   const filledBar = '█'.repeat(filledLength);
   const emptyBar = '░'.repeat(length - filledLength);
@@ -143,6 +151,7 @@ function createHealthBar(currentHp, maxHp, length) {
 
   return healthBar;
 }
+
 
 import readline from 'readline-sync';
 
@@ -159,7 +168,7 @@ function gameLoop() {
 
     // Display enemy descriptions and HP bars
     for (const enemy of enemies) {
-      console.log(enemy.describe());
+      enemy.describe();
       const enemyMaxHp = enemy.maxHp; // Assuming each enemy type has a fixed max HP
       const enemyHealthBar = createHealthBar(enemy.hp, enemyMaxHp, 20);
       console.log(`Enemy HP: [${enemyHealthBar}] (${Math.ceil(enemy.hp)}/${enemyMaxHp})`);
@@ -191,16 +200,6 @@ function gameLoop() {
       enemy.attackPlayer(player);
     }
 
-    // Check for splitting enemies
-    let newEnemies = [];
-    for (const enemy of enemies) {
-      const splitEnemies = enemy.split();
-      if (splitEnemies) {
-        newEnemies = newEnemies.concat(splitEnemies);
-      }
-    }
-    enemies = enemies.filter((enemy) => enemy.hp > 0).concat(newEnemies);
-
     if (enemies.length === 0 && currentEnemyIndex < enemyTypes.length - 1) {
       currentEnemyIndex++;
       enemies.push(new enemyTypes[currentEnemyIndex]());
@@ -227,7 +226,7 @@ io.on("connection", (socket) => {
 // message.content is the prompt that sends to the API
 const completion = await openai.createChatCompletion({
   model: "gpt-3.5-turbo",
-  messages: [{role: "user", content: "You are a character of great courage, skill, and strength. Your bravery is unmatched, and you are always willing to face any challenge that comes your way."}],
+  messages: [{role: "user", content: `you are a text adventure game from the 80s, my name is ${playerName}, in once sentence describe an describe an icy dungeon and me bravely going into it`}],
 });
 
 // This is just the response displayed as a string

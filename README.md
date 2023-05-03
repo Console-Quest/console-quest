@@ -8,7 +8,21 @@ The game is played by navigating through randomly generated rooms, battling enem
 
 The client-side code displays the game world and handles player input. When the player performs an action, such as moving or attacking, the client sends a message to the server via the Socket.IO connection. The server updates the game state and sends a message back to the client with any changes.
 
-To run the game, first install the required dependencies by running npm install in the project directory. Then, start the server by running npm start. The client can be accessed by navigating to http://localhost:3000 in a web browser.
+
+
+## Installation
+
+1. Clone the repository to your local machine.
+2. Open a terminal window and navigate to the project directory.
+3. Run npm install to install the dependencies.
+
+## Usage
+
+1. Start the server by running node index.js in the terminal.
+2. In a separate terminal window, run node gamePlayers.js.
+3. Enter your name in the gamePlayers console.
+4. The game loop will start on the server, and you will be prompted to choose your attack type and target enemy.
+5. Keep playing until you defeat all enemies or your health reaches 0.
 
 ****
 

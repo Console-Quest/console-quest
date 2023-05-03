@@ -24,34 +24,35 @@ const { Dungeon } = require('./gameplay/dungeon.js');
 const { Player, Enemy } = require('./gameplay/characters.js');
 
 // Define a function that runs the game with a given player and welcome message
-const runGame = (playerInfo, welcomeMessage, socket) => {
+const runGame = async (playerInfo, welcomeMessage, socket) => {
   socket.emit('message', welcomeMessage + '\n');
   
   const dungeon = new Dungeon();
 
-  const getNextRoom = () => {
-    socket.emit('message',`Ahead of you lies a door to the right and a door to the left. Which do you choose? \n`)
+  const getNextRoom = async () => {
     if (playerInfo.hp > 0) {
+      socket.emit('message',`Ahead of you lies a door to the right and a door to the left. Which do you choose? \n`)
       socket.emit('question', '(Type "left" or "right"): \n');
     } else {
       socket.emit('message', 'Your enemy delivers a fatal blow. GAME OVER');
     }
   }
 
-  socket.on('answer', (data) => {
+  socket.on('answer', async (data) => {
     console.log(`Received answer "${data}" from client`);
     if (data === 'left' || data === 'right') {
-      socket.emit('message', `You chose the ${data} door.\n`);
-      dungeon.createNewRoom(playerInfo, socket);
-      getNextRoom();
+      socket.emit('message', `You choose the ${data} door.\n`);
+      await dungeon.createNewRoom(playerInfo, socket);
+      await getNextRoom();
     } else {
       socket.emit('message', 'Invalid choice, please type "left" or "right".\n');
-      getNextRoom();
+      await getNextRoom();
     }
   });
 
-  getNextRoom();
+  await getNextRoom();
 }
+
 
 
 
@@ -64,27 +65,15 @@ io.on("connection", (socket) => {
 
   // Listen for the 'banana' event and update the playerName variable with the received data
   socket.on('banana', async (data) => {
-  playerName = await data;
-  let playerInstance = new Player(100, `${playerName}`, 'human', socket);
-  let message = `Pretend you're a text adventure game from the 80's, in one sentence, welcome our new ${playerInstance.race} by the name of ${playerInstance.name} to the world of Console Quest. They start the adventure approaching a dungeon and they run quickly inside, describe this.`
+    playerName = await data;
+    let playerInstance = new Player(100, `${playerName}`, 'human', socket);
+    let message = `Pretend you're a text adventure game from the 80's, in one sentence, welcome our new ${playerInstance.race} by the name of ${playerInstance.name} to the world of Console Quest. They start the adventure approaching a dungeon and they run quickly inside, describe this.`
 
-  // Call the getCompletion function to generate a welcome message and then run the game with the generated message
-  getCompletion(message).then((generatedWelcomeMessage) => {
-    runGame(playerInstance, generatedWelcomeMessage, socket);
+    // Call the getCompletion function to generate a welcome message and then run the game with the generated message
+    const generatedWelcomeMessage = await getCompletion(message); // Use await here
+    await runGame(playerInstance, generatedWelcomeMessage, socket); // Use await here
   });
-});
 
-
-  // Listen for the 'answer' event and log the received data
-  socket.on('answer', (data) => {
-    // console.log(`Received answer "${data}" from client`);
-    if (data === 'left' || data === 'right') {
-      socket.emit('message', `You chose the ${data} door.`);
-    } else {
-      socket.emit('message', 'Invalid choice, please type "left" or "right".');
-      socket.emit('question', '(Type "left" or "right")');
-    }
-  });
 
   // Listen for disconnection events and log them
   socket.on('disconnect', () => {

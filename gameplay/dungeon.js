@@ -1,54 +1,82 @@
-// Import the Rooms class
-const { Rooms } = require("./rooms");
-//const { getCompletion } = require('../gameServer.js');
+const { Rooms } = require('./rooms');
+const { Player, Enemy } = require('./characters.js');
+const chalk = require("chalk");
 
 
-// Define the Dungeon class
 class Dungeon {
-  constructor(getCompletionFunction) {
-    this.getCompletion = getCompletionFunction;
-    this.level = 1; // Initialize the level property to 1
-    this.healingRoomChance = 0.01; // Initialize the healing room chance property to 0.01
-    this.treasureRoomChance = 0.4; // Initialize the treasure room chance property to 0.4
-    this.defaultHealingRoomChance = 0.2; // Initialize the default healing room chance property to 0.2
-    this.defaultTreasureRoomChance = 0.2; // Initialize the default treasure room chance property to 0.2
-    this.previousRoom = null; // Initialize the previous room property to null
+  constructor() {
+    this.level = 1;
+    this.healingRoomChance = 0.01;
+    this.treasureRoomChance = 0.4;
+    this.defaultHealingRoomChance = 0.2;
+    this.defaultTreasureRoomChance = 0.2;
+    this.previousRoom = null;
   }
 
   levelUp() {
-    this.level += 1; // Increment the level property by 1
+    this.level += 1;
   }
 
   setDefaultChance() {
-    this.healingRoomChance = this.defaultHealingRoomChance; // Set the healing room chance property back to its default value
+    this.healingRoomChance = this.defaultHealingRoomChance;
+  }
+
+  async combatLoop(player, enemy, socket) {
+    while (player.hp > 0 && enemy.hp > 0) {
+      await player.attackEnemy(enemy, socket);
+      socket.emit('message', `Your health: ${player.createHealthBar(10)} (${player.hp}/${player.maxHp})\n`);
+      socket.emit('message', `Enemy health: ${enemy.createHealthBar(10)} (${enemy.hp}/${enemy.maxHp})\n`);
+
+      if (enemy.hp <= 0) {
+        socket.emit('message', 'You have defeated the monster!\n');
+        break;
+      }
+
+      await enemy.attackEnemy(player, socket);
+      socket.emit('message', `Your health: ${player.createHealthBar(10)} (${player.hp}/${player.maxHp})\n`);
+      socket.emit('message', `Enemy health: ${enemy.createHealthBar(10)} (${enemy.hp}/${enemy.maxHp})\n`);
+
+      if (player.hp <= 0) {
+        socket.emit('message', 'You have been defeated!\n');
+        break;
+      }
+    }
   }
 
   async createNewRoom(player, socket) {
     let roomType;
 
-    // Generate a new room type that is differ'nt from the previous one
-    
     do {
       const probability = Math.random();
       if (probability < this.healingRoomChance) {
-        roomType = 'healing'; // Set the room type to "healing" if the random probability is less than the healing room chance property
-        this.setDefaultChance(); // Set the healing room chance back to its default value
+        roomType = 'healing';
+        this.setDefaultChance();
       } else if (probability < this.treasureRoomChance + this.healingRoomChance) {
-        roomType = 'treasure'; // Set the room type to "treasure" if the random probability is between the healing room chance and the treasure room chance plus the healing room chance
+        roomType = 'treasure';
       } else {
-        roomType = 'monster'; // Set the room type to "monster" otherwise
-        this.healingRoomChance += 0.25; // Increase the healing room chance property by 0.25
+        roomType = 'monster';
+        this.healingRoomChance += 0.25;
       }
-    } while (roomType === this.previousRoomType) // Repeat the loop until the room type is different from the previous room type
+    } while (roomType === this.previousRoomType);
 
-    const room = new Rooms(roomType, this.level); // Create a new instance of the Rooms class with the generated room type and the current level
-    room.useAbility(player, socket); // Use the room's ability on the player
-    this.levelUp(); // Increase the level property by 1
+    const newRoom = new Rooms(roomType, this.level);
+    if (roomType === 'monster') {
+      newRoom.monster = newRoom.createMonster(); // Assign the created monster to the newRoom.monster property
+      // newRoom.useAbility(player, socket, newRoom.monster); // Pass the newRoom.monster as an argument to useAbility
 
-    this.previousRoomType = roomType; // Set the previous room type to the current room type
-    return room; // Return the new room
+      const enemy = newRoom.monster;
+      socket.emit('message', 'A monster appears in the room!\n');
+      socket.emit('message', `${enemy.description}\n`);
+
+      await this.combatLoop(player, enemy, socket);
+    } else {
+      await newRoom.useAbility(player, socket); // Add 'await' here
+      this.levelUp();
+    }
+
+    this.previousRoomType = roomType;
   }
+
 }
 
-// Export the Dungeon class
 module.exports = { Dungeon: Dungeon };

@@ -1,4 +1,5 @@
 const { getCompletion } = require('../openaiHelper.js');
+const chalk = require("chalk");
 
   // Define a Character class with a constructor method that takes a hit points parameter
   class Character {
@@ -41,13 +42,17 @@ const { getCompletion } = require('../openaiHelper.js');
 
     // Define an attackEnemy method that calculates the damage of the player's attack, checks for a critical hit, and applies the damage to the enemy
     async attackEnemy(enemy, socket) {
-      //let damage = this.baseDmg;
       let didCrit = this.checkForCrit();
-      let damage = didCrit ? this.baseDmg * this.baseCritMulti : this.baseDmgdamage;
-      let response = didCrit ? `Critical hit! - You deal ${damage}\n` : `You deal ${damage}\n`;
-      socket.emit('message', response);
-      // let attackMessage = await this.getCompletion(`You attack for ${Math.ceil(damage)} hp\n`)
-      // socket.emit('message', `${attackMessage}\n`);
+      let damage = didCrit ? this.baseDmg * this.baseCritMulti : this.baseDmg;
+      let didCritResponse = didCrit
+      ? chalk.red(`Critical hit! - You deal ${damage}\n`)
+      : chalk.green(`You deal ${damage}\n`);
+      let response = chalk.yellow(`Pretend you're a text adventure game from the 80's. A player is fighting an ${enemy.name}. The player strikes the enemy for ${didCritResponse}. Describe it and inform me of how much damage the player did.\n`);
+      
+      // Use await to get the generated message
+      const generatedMessage = await getCompletion(response, 'system');
+      socket.emit('message', generatedMessage);
+  
       super.attack(enemy, Math.ceil(damage));
     }
 
@@ -82,14 +87,17 @@ const { getCompletion } = require('../openaiHelper.js');
     }
 
     // Define an attack method that takes a target parameter and reduces the target's hit points by the enemy's base damage
-    attackEnemy(enemy, socket) {
+    async attackEnemy(enemy, socket) {
       let damage = this.baseDmg;
-      //`Pretend you're a text adventure game from the 80's, in one sentence, welcome our new ${playerInstance.race} by the name of ${playerInstance.name} to the world of Console Quest. They start the adventure approaching a dungeon and they run quickly inside, describe this.`
-      let message = `Pretend you're a text adventure game from the 80's. A player is fighting an ${enemy.type}. They get hit for ${damage}. Describe it and inform me of how much life I lost\n`;
-      getCompletion(message, 'system').then((generatedMessage) => {
-        socket.emit('message', generatedMessage);
-        });
-      enemy.takeDamage(damage)
+      let message = chalk.red(
+        `Pretend you're a text adventure game from the 80's. A player is fighting an ${enemy.name}. The player gets hit for ${damage}. Describe it and inform the player on how much life they lost\n`
+      );
+      
+      // Use await to get the generated message
+      const generatedMessage = await getCompletion(message, 'system');
+      socket.emit('message', generatedMessage);
+      
+      enemy.takeDamage(damage);
     }
 
     takeDamage(damage) {

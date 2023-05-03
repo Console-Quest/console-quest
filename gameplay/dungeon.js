@@ -3,34 +3,35 @@ const { Rooms } = require("./rooms");
 class Dungeon {
 constructor() {
   this.level = 1;
-  this.healingRoomChance = 0.2;
+  this.healingRoomChance = 0.1;
   this.treasureRoomChance = 0.4;
-  this.monsterRoomChance = 0.6;
   this.defaultHealingRoomChance = 0.2;
-  this.defaultTreasureRoomChance = 0.4;
-  this.defaultMonsterRoomChance = 0.6;
+  this.defaultTreasureRoomChance = 0.2;
 }
 
-  levelUp() {
-    if (this.level < 10) {
-      this.level += 1;
-      this.healingRoomChance = this.defaultHealingRoomChance;
-      this.monsterRoomChance = this.defaultMonsterRoomChance;
-    }
+  levelUp(){
+    this.level += 1;
   }
 
-  createNewRoom() {
+  setDefaultChance(){
+    this.healingRoomChance = this.defaultHealingRoomChance;
+  }
+
+  createNewRoom(player) {
+    const probability = Math.random(); // Random Number between 0 and 1
     let room;
-  
-    const probability = Math.random();
+
     if (probability < this.healingRoomChance) {
       room = new Rooms('healing', this.level);
-    } else if (probability < this.treasureRoomChance) {
+      this.setDefaultChance();
+    } else if (probability < this.treasureRoomChance + this.healingRoomChance) {
       room = new Rooms('treasure', this.level);
     } else {
       room = new Rooms('monster', this.level);
+      this.healingRoomChance += 0.15
     }
-  
+    
+    room.useAbility(player)
     return room;
   }
   

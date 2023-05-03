@@ -13,13 +13,11 @@ const { Player, Enemy } = require('./gameplay/characters.js');
 
 const dungeon = new Dungeon();
 let player = new Player(10, 'VnGChrome', 'human');
-let enemy = new Enemy(20, 'orc', 4, 20)
-console.log(dungeon.createNewRoom());
-console.log(enemy)
-console.log(player)
-console.log(player.checkForCrit());
 
-console.log('Game over!');
+for (let i = 0; i < 20; i++){
+  dungeon.createNewRoom(player);
+}
+
 
 
 // The code below is the server connecting the client, this is how I get information back and forth

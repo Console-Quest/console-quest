@@ -1,33 +1,6 @@
 const { Enemy } = require('./characters')
 // Define a function for combat
-function beginCombat(player, monster) {
-  while (player.hp > 0 && !player.isDead && monster.hp > 0 && !monster.isDead) {
-    // Player attacks the monster
-    player.attackEnemy(monster);
-    // Log a message indicating the player's attack and the monster's remaining health
-    console.log(`Player ${player.name} attacked ${monster.name} for ${player.baseDmg} damage!`);
-    console.log(`Monster ${monster.name} has ${monster.hp} HP remaining.`);
 
-    // Check if the monster is still alive
-    if (monster.hp <= 0) {
-      // If the monster is dead, log a message indicating that the player won
-      console.log(`Player ${player.name} defeated ${monster.name}!`);
-      this.dungeon.levelUp();
-      break;
-    }
-
-    // Monster attacks the player
-    monster.attack(player);
-    // Log a message indicating the monster's attack and the player's remaining health
-    console.log(`${monster.name} attacked player ${player.name} for ${monster.baseDmg} damage!`);
-    console.log(`Player ${player.name} has ${player.hp} HP remaining.`);
-  }
-
-  // If the player is dead, log a message indicating that the player lost
-  if (player.hp === 0) {
-    console.log(`Player ${player.name} was defeated by ${monster.name}!`);
-  }
-}
 
 // Define a class called Rooms
 class Rooms {
@@ -70,14 +43,16 @@ class Rooms {
     // If the room type is a monster room, create a new enemy and have it fight the player
     else if (this.roomType === 'monster') {
       // Create a new enemy object with scaled HP and damage based on the dungeon level
-      const enemyHp = 50 * this.dungeonLevel;
-      const enemyDmg = 10 * this.dungeonLevel;
+      const enemyHp = 4 * this.dungeonLevel;
+      const enemyDmg = 2 * this.dungeonLevel;
       const monster = new Enemy(enemyHp, "Orc", enemyDmg);
       // Log a message indicating that the enemy has appeared
       console.log(`A ${monster.name} appeared!`);
   
       // Begin combat
-      beginCombat(player, monster);
+      console.log('fight happens here')
+      player.takeDamage(2)
+      console.log(`player has ${player.hp} remaining`)
   
       // If the player is dead, log a message indicating that the player lost
       if (player.isDead) {

@@ -11,13 +11,6 @@ class Character {
   }
 
   // Define a takeDamage method that reduces the character's hit points by the given amount of damage
-  takeDamage(damage) {
-    console.log(`${this.name} takes ${damage} damage!`);
-    this.hp = Math.max(0, this.hp - damage);
-    if (this.hp === 0) {
-      this.isDead = true
-    }
-  }
 
   // Define a createHealthBar method that takes a length parameter and returns a health bar string
   createHealthBar(length) {
@@ -64,6 +57,10 @@ class Player extends Character {
       console.log("Critical hit!");
     }
     super.attack(enemy, damage);
+  }
+
+  takeDamage(damage) {
+    this.hp -= damage
   }
 
   checkForDead() {

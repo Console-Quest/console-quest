@@ -7,7 +7,7 @@ const KEY = process.env.OPENAI_API_KEY
 const ORG = process.env.ORG
 
 
-
+// Setup the headers for the open API
 import { Configuration, OpenAIApi } from "openai";
 const configuration = new Configuration({
     organization: `${ORG}`,
@@ -16,7 +16,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 
-
+// Classes are created here
 class Character {
   constructor(hp) {
     this.hp = hp;
@@ -139,6 +139,7 @@ class Ogre extends Enemy {
   }
 }
 
+// creates health bar
 function createHealthBar(currentHp, maxHp, length) {
   if (currentHp <= 0) {
     return '░'.repeat(length); // return an empty health bar
@@ -165,7 +166,7 @@ function gameLoop() {
     // Display player's health bar
     const playerHealthBar = createHealthBar(player.hp, 100, 20);
     console.log(`${playerName} HP: [${playerHealthBar}] (${player.hp}/${100})`);
-
+  
     // Display enemy descriptions and HP bars
     for (const enemy of enemies) {
       enemy.describe();
@@ -173,17 +174,19 @@ function gameLoop() {
       const enemyHealthBar = createHealthBar(enemy.hp, enemyMaxHp, 20);
       console.log(`Enemy HP: [${enemyHealthBar}] (${Math.ceil(enemy.hp)}/${enemyMaxHp})`);
     }
-
+  
     // Player's turn
     for (const enemy of enemies) {
       let attackType;
       let attackChoice = readline.question('Choose your attack type (1: weapon, 2: spell, 3: unarmed): ');
-
+  
+      // Validate user input for attack type
       while (attackChoice !== '1' && attackChoice !== '2' && attackChoice !== '3') {
         console.log('Invalid choice. Please choose 1, 2, or 3.');
         attackChoice = readline.question('Choose your attack type (1: weapon, 2: spell, 3: unarmed): ');
       }
-
+  
+      // Convert user input to attack type
       if (attackChoice === '1') {
         attackType = 'weapon';
       } else if (attackChoice === '2') {
@@ -191,20 +194,24 @@ function gameLoop() {
       } else if (attackChoice === '3') {
         attackType = 'unarmed';
       }
-
+  
+      // Player attacks enemy
       player.attackEnemy(enemy, attackType);
     }
-
+  
     // Enemy's turn
     for (const enemy of enemies) {
       enemy.attackPlayer(player);
     }
-
+  
+    // Check if all enemies are defeated and there are more enemy types to fight
     if (enemies.length === 0 && currentEnemyIndex < enemyTypes.length - 1) {
+      // Update current enemy index and add a new enemy of a different type
       currentEnemyIndex++;
       enemies.push(new enemyTypes[currentEnemyIndex]());
     }
   }
+  
   
 
   if (player.hp <= 0) {
@@ -219,29 +226,30 @@ let playerName = "";
 
 io.on("connection", (socket) => {
   console.log('New client connected');
-  
+
+  // Listen for the 'userInput' event from the client, which contains the player's name.
   socket.on('userInput', async (data) => {
-  playerName = data;
+    playerName = data;
 
-// message.content is the prompt that sends to the API
-const completion = await openai.createChatCompletion({
-  model: "gpt-3.5-turbo",
-  messages: [{role: "user", content: `you are a text adventure game from the 80s, my name is ${playerName}, in once sentence describe an describe an icy dungeon and me bravely going into it`}],
-});
+    // Send a message to the OpenAI API to generate a description of the dungeon based on the player's name.
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [{role: "user", content: `you are a text adventure game from the 80s, my name is ${playerName}, in once sentence describe an describe an icy dungeon and me bravely going into it`}],
+    });
 
-// This is just the response displayed as a string
-console.log(completion.data.choices[0].message.content);
+    // Display the generated description in the server console.
+    console.log(completion.data.choices[0].message.content);
 
-
-
-  gameLoop(); // Run the game loop
-    // this is where playerName gets updated.
+    // Start the game loop after receiving the player's name and generating the dungeon description.
+    gameLoop();
   });
-  
+
+  // Listen for the 'disconnect' event from the client, which is triggered when the client closes the connection.
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
 });
 
-// console.log(playerName);
+
+
 

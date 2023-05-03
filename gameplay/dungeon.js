@@ -23,11 +23,9 @@ class Dungeon {
 
   async createNewRoom(player, socket) {
     let roomType;
-    let messageToSend = 'You search for a new room ahead'
-    // let searchRoomMessage = await this.getCompletion(messageToSend);
 
     // Generate a new room type that is differ'nt from the previous one
-    console.log(`${messageToSend} \n`)
+    
     do {
       const probability = Math.random();
       if (probability < this.healingRoomChance) {

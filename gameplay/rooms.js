@@ -40,7 +40,7 @@ class Rooms {
 // Define an array of buffs
 const buffs = [
   { type: "damage", value: 0.05, property: "baseDmg" }, // Increase base damage by 50%
-  { type: "crit", value: 0.02, property: "critChance" }, // Increase critical strike chance by 20%
+  { type: "crit", value: 0.01, property: "critChance" }, // Increase critical strike chance by 10%
   { type: "maxHp", value: 0.05, property: "maxHp"} 
 ];
 
@@ -55,8 +55,8 @@ const value = randomBuff.value;
 player[property] += value * player[property];
 
 // Log a message indicating the buff
-socket.emit('message', `Increased ${player.name}'s ${property} by ${value * 100}%.`);
- // Add a blank line for spacing
+socket.emit('message', `Increased ${player.name}'s ${property} by ${value * 100}%!\n`);
+console.log(`You collect you treasure and move on... \n`);
 
 
       // If the room type is a monster room, create a new enemy and have it fight the player
@@ -87,17 +87,17 @@ socket.emit('message', `Increased ${player.name}'s ${property} by ${value * 100}
       const monster = new Enemy(enemyHp, randomCreature.type, enemyDmg, randomCreature.description)
       socket.emit('message', monster.description);
 
-      socket.emit('message', 'You begin combat\n')
+      socket.emit('message', `---------- START COMBAT ----------\n`)
       do {
         socket.emit('message', `${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP\n`)
         socket.emit('message', `${monster.name}: ${monster.createHealthBar(monster.maxHp)} ${monster.hp}/${monster.maxHp} HP\n`)
         // Begin combat
-        player.attackEnemy(monster)
+        player.attackEnemy(monster, socket)
         if (monster.hp < 0) {
-          socket.emit('message', `You slain the`+(monster.name)+'\n')
+          socket.emit('message', `You have slain the `+(monster.name)+'\n')
           continue;
         }
-        monster.attackEnemy(player)
+        monster.attackEnemy(player, socket)
 
       } while (player.hp > 0 && monster.hp > 0)
     }
@@ -105,4 +105,10 @@ socket.emit('message', `Increased ${player.name}'s ${property} by ${value * 100}
 }
 
 // Export the Rooms class
+
+/*
+
+
+
+*/ 
 module.exports = { Rooms: Rooms };

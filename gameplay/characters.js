@@ -18,7 +18,7 @@
   // Define a Player class that extends the Character class
   class Player extends Character {
     // Define a constructor method that takes a hit points, username, and species parameter
-    constructor(hp, userName, race, getCompletion) {
+    constructor(hp, userName, race) {
       super(Math.max(hp, 0)); // Call the super constructor with the hit points parameter
       this.name = userName; // Set the name property to the given username
       this.race = race; // Set the race property to the given race name
@@ -26,7 +26,6 @@
       this.baseCritChance = 0.1; // Set the base crit chance property to the given race crit chance
       this.baseCritMulti = 1.5; // Set the base crit multiplier property to the given race crit multiplier
       this.maxHp = hp; // Set the max hit points property to the given hit points
-      this.getCompletion = getCompletion();
     }
 
     // Define a checkForCrit method that generates a random number and returns true if it is less than or equal to the base crit chance
@@ -39,14 +38,14 @@
     }
 
     // Define an attackEnemy method that calculates the damage of the player's attack, checks for a critical hit, and applies the damage to the enemy
-    async attackEnemy(enemy) {
+    async attackEnemy(enemy, socket) {
       let damage = this.baseDmg;
       if (this.checkForCrit()) {
         damage *= this.baseCritMulti;
-        console.log("Critical hit!");
+        socket.emit('message', "Critical hit!");
       }
       // let attackMessage = await this.getCompletion(`You attack for ${Math.ceil(damage)} hp\n`)
-      // console.log(`${attackMessage}\n`);
+      // socket.emit('message', `${attackMessage}\n`);
       super.attack(enemy, Math.ceil(damage));
     }
 
@@ -81,9 +80,9 @@
     }
 
     // Define an attack method that takes a target parameter and reduces the target's hit points by the enemy's base damage
-    attackEnemy(enemy) {
+    attackEnemy(enemy, socket) {
       let damage = this.baseDmg;
-      console.log(`You get hit for ${damage} hp\n`)
+      socket.emit('message', `You get hit for ${damage} hp\n`)
       enemy.takeDamage(damage)
     }
 

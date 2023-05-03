@@ -2,6 +2,7 @@
 class Character {
   constructor(hp) {
     this.hp = hp; // Set the hit points property to the given value
+    this.isDead = false;
   }
 
   // Define an attack method that takes a target and damage parameter and calls the target's takeDamage method
@@ -11,7 +12,11 @@ class Character {
 
   // Define a takeDamage method that reduces the character's hit points by the given amount of damage
   takeDamage(damage) {
-    this.hp -= damage;
+    console.log(`${this.name} takes ${damage} damage!`);
+    this.hp = Math.max(0, this.hp - damage);
+    if (this.hp === 0) {
+      this.isDead = true
+    }
   }
 
   // Define a createHealthBar method that takes a length parameter and returns a health bar string
@@ -35,10 +40,10 @@ class Player extends Character {
   constructor(hp, userName, species) {
     super(hp); // Call the super constructor with the hit points parameter
     this.name = userName; // Set the name property to the given username
-    this.species = species.name; // Set the species property to the given species name
-    this.baseDmg = species.damage; // Set the base damage property to the given species damage
-    this.baseCritChance = species.critChance; // Set the base crit chance property to the given species crit chance
-    this.baseCritMulti = species.critMulti; // Set the base crit multiplier property to the given species crit multiplier
+    this.species = species; // Set the species property to the given species name
+    this.baseDmg = 10; // Set the base damage property to the given species damage
+    this.baseCritChance = 0.1; // Set the base crit chance property to the given species crit chance
+    this.baseCritMulti = 1.5; // Set the base crit multiplier property to the given species crit multiplier
     this.maxHp = hp; // Set the max hit points property to the given hit points
   }
 
@@ -60,28 +65,43 @@ class Player extends Character {
     }
     super.attack(enemy, damage);
   }
+
+  checkForDead() {
+    if (this.hp === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 // Define an Enemy class that extends the Character class
 class Enemy extends Character {
-  // Define a constructor method that takes a hit points, name, and base damage parameter
-  constructor(hp, name, baseDmg) {
-    super(hp); // Call the super constructor with the hit points parameter
-    this.name = name; // Set the name property to the given name
-    this.baseDmg = baseDmg; // Set the base damage property to the given base damage
-    this.maxHp = hp; // Set the max hit points property to the given hit points
+  constructor(hp, name, baseDmg, level) {
+    super(hp * level);
+    this.name = name;
+    this.baseDmg = baseDmg * (level / 2);
+    this.maxHp = hp * level;
   }
 
   // Define an attack method that takes a target parameter and reduces the target's hit points by the enemy's base damage
-  attack(target) {
+  attackEnemy(enemy) {
     let damage = this.baseDmg;
-    target.takeDamage(damage);
+    if (this.checkForCrit()) {
+      damage *= this.baseCritMulti;
+      console.log("Critical hit!");
+    }
+    console.log(`${this.name} attacked ${enemy.name} for ${damage} damage!`);
+    super.attack(enemy, damage);
   }
+  
 
   // Define a checkForDead method that returns true if the enemy's hit points are less than or equal to zero
   checkForDead() {
-    if (this.hp <= 0){
-      return true
+    if (this.hp <= 0) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

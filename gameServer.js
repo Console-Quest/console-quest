@@ -1,31 +1,23 @@
 'use strict'
 
 // package imports and env variables
-import dotenv from 'dotenv';
-import { Server } from "socket.io";
-dotenv.config();
+const { Server } = require("socket.io");
+require('dotenv').config();
 const PORT = process.env.PORT || 3001;
 const KEY = process.env.OPENAI_API_KEY
 const ORG = process.env.ORG
 
 // import our classes here
-import { Dungeon } from './gameplay/dungeon.js';
-import { Player, Enemy } from './gameplay/characters.js';
+const { Dungeon } = require('./gameplay/dungeon.js');
+const { Player, Enemy } = require('./gameplay/characters.js');
 
 const dungeon = new Dungeon();
-let player = new Player(100, 'Player 1', { name: 'Human', damage: 10, critChance: 0.2, critMulti: 2 });
-
-while (player.hp > 0) {
-  console.log(`\nLevel ${dungeon.level}`);
-  const room = dungeon.createNewRoom();
-  console.log(`Entered ${room.roomType} room...`);
-
-  room.useAbility(player);
-
-  if (room.roomType === 'monster' && !player.checkForDead()) {
-    dungeon.levelUp();
-  }
-}
+let player = new Player(10, 'VnGChrome', 'human');
+let enemy = new Enemy(20, 'orc', 4, 20)
+console.log(dungeon.createNewRoom());
+console.log(enemy)
+console.log(player)
+console.log(player.checkForCrit());
 
 console.log('Game over!');
 

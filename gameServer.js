@@ -7,19 +7,24 @@ const KEY = process.env.OPENAI_API_KEY
 const ORG = process.env.ORG
 
 const io = new Server(PORT);
+let playerName = "";
 
 io.on("connection", (socket) => {
   console.log('New client connected');
   
   socket.on('userInput', (data) => {
-    console.log(`Received user input: ${data}`);
-    // do something with the user's input
+  playerName = data;
+    // this is where playerName gets updated.
   });
   
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
 });
+
+console.log(playerName);
+// playerName is the response from the client side. 
+
 
 // import { Configuration, OpenAIApi } from "openai";
 // const configuration = new Configuration({

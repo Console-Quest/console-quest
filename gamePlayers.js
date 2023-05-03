@@ -25,6 +25,6 @@ socket.on('disconnect', () => {
   console.log('Disconnected from server');
 });
 
-console.log('test');
+console.log();
 
 

@@ -3,26 +3,26 @@ import player from './choiceRoom';
 class TreasureRoom {
     constructor() {
       this.buffs = [
-        { type: 'health', value: 5, response: 'You found a Constitution Buff! Health increased by' },
-        { type: 'minDmg', value: 1, response: 'You found a Swift Buff! Minimum Damage increased by' },
-        { type: 'maxDmg', value: 1.5, response: 'You found a Power Buff! Maximum Damage increased by' },
-        { type: 'critChance', value: 0.05, response: 'You found a Accuracy Buff! Critical Chance increased by' },
-        { type: 'critDmg', value: 0.25, response: 'You found a Deadly Buff! Critical Damage increased by' },
+        { type: 'health', value: 5, response: 'You found a Constitution Buff! Health increased by ' },
+        { type: 'minDmg', value: 1, response: 'You found a Swift Buff! Minimum Damage increased by ' },
+        { type: 'maxDmg', value: 1.5, response: 'You found a Power Buff! Maximum Damage increased by ' },
+        { type: 'critChance', value: 0.05, response: 'You found a Accuracy Buff! Critical Chance increased by ' },
+        { type: 'critDmg', value: 0.25, response: 'You found a Deadly Buff! Critical Damage increased by ' },
       ]
     }
 
 
-    getRandomBuff = () => {
-        this.player = new player(player);
+    getRandomBuff = (player) => {
+        //this.player = new player(player);
 
         // Choose a random buff from buff objects
         let newBuff = buffs[Math.floor(Math.random() * buffs.length)];
 
         // Check current level of player -> use this as multiplier
-            let multiplier = this.player.curLvl <= 10 ? 1 
-            : this.player.curLvl <= 20 ? 2  
-            : this.player.curLvl <= 30 ? 3 
-            : this.player.curLvl <= 40 ? 4 
+            let multiplier = player.curLvl <= 10 ? 1 
+            : player.curLvl <= 20 ? 2  
+            : player.curLvl <= 30 ? 3 
+            : player.curLvl <= 40 ? 4 
             : 5;
             
         // Multiply buff value by level multiplier
@@ -32,28 +32,28 @@ class TreasureRoom {
         let responseVal;
         switch(newBuff) {
             case 'health':
-                this.player.maxHealth += buffVal;
-                responseVal = `${newBuff.response} ${buffVal}. Max Health is now ${this.player.maxHealth}!`;
+                player.maxHealth += buffVal;
+                responseVal = `${newBuff.response} ${buffVal}. Max Health is now ${player.maxHealth}!`;
                 break;
             case 'minDmg':
-                this.player.minDmg += buffVal;
-                responseVal = `${newBuff.response} ${buffVal}. Minimum Damage is now ${this.player.minDmg}!`;
+                player.minDmg += buffVal;
+                responseVal = `${newBuff.response} ${buffVal}. Minimum Damage is now ${player.minDmg}!`;
                 break;
             case 'maxDmg':
-                this.player.maxDmg += buffVal;
-                responseVal = `${newBuff.response} ${buffVal}. Maximum Damage is now ${this.player.maxDmg}!`;
+                player.maxDmg += buffVal;
+                responseVal = `${newBuff.response} ${buffVal}. Maximum Damage is now ${player.maxDmg}!`;
                 break;
             case 'critChance':
-                this.player.critChance += buffVal;
-                responseVal = `${newBuff.response} ${buffVal}. Critical Chance is now ${this.player.critChance}!`;
+                player.critChance += buffVal;
+                responseVal = `${newBuff.response} ${buffVal}. Critical Chance is now ${player.critChance}!`;
                 break;
             case 'critDmg':
-                this.player.critDmg += buffVal;
-                responseVal = `${newBuff.response} ${buffVal}. Critical Damage is now ${this.player.critDmg}!`;
+                player.critDmg += buffVal;
+                responseVal = `${newBuff.response} ${buffVal}. Critical Damage is now ${player.critDmg}!`;
                 break;
         }
         console.log(responseVal);
-        return this.player;
+        return player;
     }
   }
   

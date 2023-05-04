@@ -76,22 +76,34 @@ class Player extends Character {
 
 // Define an Enemy class that extends the Character class
 class Enemy extends Character {
-  constructor(hp, name, baseDmg, level) {
-    super(hp * level);
+  constructor(hp, name, baseDmg) {
+    super(hp);
     this.name = name;
-    this.baseDmg = baseDmg * (level / 2);
-    this.maxHp = hp * level;
+    this.baseDmg = baseDmg;
+    this.maxHp = hp;
   }
 
   // Define an attack method that takes a target parameter and reduces the target's hit points by the enemy's base damage
   attackEnemy(enemy) {
     let damage = this.baseDmg;
-    if (this.checkForCrit()) {
-      damage *= this.baseCritMulti;
-      console.log("Critical hit!");
+    enemy.takeDamage(damage)
+  }
+
+  takeDamage(damage) {
+    this.hp -= damage
+  }
+
+  createHealthBar(length) {
+    if (this.hp <= 0) {
+      return '░'.repeat(length); // return an empty health bar
     }
-    console.log(`${this.name} attacked ${enemy.name} for ${damage} damage!`);
-    super.attack(enemy, damage);
+
+    const filledLength = Math.round((this.hp / this.maxHp) * length);
+    const filledBar = '█'.repeat(filledLength);
+    const emptyBar = '░'.repeat(length - filledLength);
+    const healthBar = filledBar + emptyBar;
+
+    return healthBar;
   }
 
 

@@ -15,7 +15,7 @@ class Rooms {
   }
 
   // Define a method called useAbility that takes a player object as a parameter
-  useAbility(player) {
+  useAbility(player, dungeonLevel) {
     // Log a message indicating that the ability is being used
     console.log(`Using ${this.roomType} ability...`);
   
@@ -44,17 +44,21 @@ class Rooms {
     // If the room type is a monster room, create a new enemy and have it fight the player
     else if (this.roomType === 'monster') {
       // Create a new enemy object with scaled HP and damage based on the dungeon level
-      const enemyHp = 4 * this.dungeonLevel;
-      const enemyDmg = 2 * this.dungeonLevel;
+      const enemyHp = Math.ceil(1.05 * this.dungeonLevel);
+      const enemyDmg = Math.ceil(1.05 * this.dungeonLevel);
       const monster = new Enemy(enemyHp, "Orc", enemyDmg);
       // Log a message indicating that the enemy has appeared
-      console.log(`A ${monster.name} appeared!`);
-  
+      console.log(`A ${monster.name} appeared!\n`);
+
+      console.log(`${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP\n`)  
+      console.log(`${monster.name}: ${monster.createHealthBar(monster.maxHp)} ${monster.hp}/${monster.maxHp} HP\n`)  
+      
+      console.log(monster)
       // Begin combat
       console.log('fight happens here')
-      player.takeDamage(2)
+      player.attackEnemy(monster)
+      monster.attackEnemy(player)
 
-      console.log(`${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP`)  
     }
   }  
 }

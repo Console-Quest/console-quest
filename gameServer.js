@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3001;
 const KEY = process.env.OPENAI_API_KEY
 const ORG = process.env.ORG
 const io = new Server(PORT);
+const readline = require('node:readline');
 
 // Import OpenAI API and configure it using environment variables
 const { Configuration, OpenAIApi } = require("openai");
@@ -31,6 +32,7 @@ async function getCompletion(message) {
 const { Dungeon } = require('./gameplay/dungeon.js');
 const { Player, Enemy } = require('./gameplay/characters.js');
 
+
 // Define a function that runs the game with a given player and welcome message
 const runGame = (playerInfo, welcomeMessage) => {
   console.log(welcomeMessage + '\n');
@@ -39,7 +41,9 @@ const runGame = (playerInfo, welcomeMessage) => {
 
   do {
     // Create a new room and continue the game while the player's hp is above 0
-    dungeon.createNewRoom(playerInfo);
+    dungeon.getUserRoomChoice(playerInfo)
+    // Passed info to userRoomChoice, to let user choose left or right, then passes player info to createNewRoom on invocation
+    // dungeon.createNewRoom(playerInfo);
   } while (playerInfo.hp > 0);
 
   console.log('Your enemy delivers a fatal blow. GAME OVER');

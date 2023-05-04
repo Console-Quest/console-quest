@@ -83,6 +83,7 @@ console.log(); // Add a blank line for spacing
       // Create the enemy object using the selected creature's stats
       const monster = new Enemy(enemyHp, randomCreature.type, enemyDmg)
 
+      console.log(`Hark! ${monster.description}`);
       console.log('You begin combat\n')
       do {
         console.log(`${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP\n`)
@@ -90,7 +91,7 @@ console.log(); // Add a blank line for spacing
         // Begin combat
         player.attackEnemy(monster)
         if (monster.hp < 0) {
-          console.log('You slain the monster\n')
+          console.log(`You have slain the ${monster.type}\n`)
           continue;
         }
         monster.attackEnemy(player)

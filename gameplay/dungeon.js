@@ -20,11 +20,16 @@ class Dungeon {
     this.healingRoomChance = this.defaultHealingRoomChance; // Set the healing room chance property back to its default value
   }
 
+  getUserRoomChoice(player) {
+    console.log('You continue forward to find two doors, one on the left, and one on the right. Which door do you choose? \n')
+    // Get user LEFT/RIGHT choice here
+    this.createNewRoom(player)
+  }
+
   createNewRoom(player) {
     let roomType;
 
     // Generate a new room type that is different from the previous one
-    console.log('You search for a new room ahead \n')
     do {
       const probability = Math.random();
       if (probability < this.healingRoomChance) {

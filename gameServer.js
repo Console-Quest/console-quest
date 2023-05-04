@@ -8,14 +8,29 @@ const KEY = process.env.OPENAI_API_KEY
 const ORG = process.env.ORG
 const io = new Server(PORT);
 
+const { Configuration, OpenAIApi } = require("openai");
+const configuration = new Configuration({
+    organization: `${ORG}`,
+    apiKey: `${KEY}`,
+});
+const openai = new OpenAIApi(configuration);
+
+async function getCompletion(message) {
+  const completion = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages: [{role: "user", content: `${message}`}],
+  });
+
+  return completion.data.choices[0].message.content;
+}
+
+
 // import our classes here
 const { Dungeon } = require('./gameplay/dungeon.js');
 const { Player, Enemy } = require('./gameplay/characters.js');
 
-
-
-const runGame = (playerInfo) => {
-  console.log(`Welcome ${playerInfo.name} To Console Quest`);
+const runGame = (playerInfo, welcomeMessage) => {
+  console.log(welcomeMessage);
   const dungeon = new Dungeon();
 
   do {
@@ -32,14 +47,16 @@ let playerName = "";
 
 io.on("connection", (socket) => {
   console.log('New client connected');
-  // The code below is the server connecting the client, this is how I get information back and forth
-
 
   socket.on('banana', async (data) => {
     playerName = await data;
     // this is where playerName gets updated.
     let playerInstance = new Player(100, `${playerName}`, 'human');
-    runGame(playerInstance)
+    let message = `Pretend youre a text adventure game from the 80's, in one sentence, welcome our new ${playerInstance.race} by the name of ${playerInstance.name} to the world of Console Quest. They start The adventure approaching a dungeon and they run quickly inside, descibe this`
+    // Move the getCompletion and runGame call inside the 'banana' event listener
+    getCompletion(message).then((generatedWelcomeMessage) => {
+      runGame(playerInstance, generatedWelcomeMessage);
+    });
   });
 
   // Listen for the client's answer to the question
@@ -47,46 +64,10 @@ io.on("connection", (socket) => {
     console.log(`Received answer "${data}" from client`);
   });
 
-
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
 });
-
-
-// The code below is the chat GPT API Need to make this a function
-
-// console.log(playerName);
-// playerName is the response from the client side. 
-
-
-// import { Configuration, OpenAIApi } from "openai";
-// const configuration = new Configuration({
-//     organization: `${ORG}`,
-//     apiKey: `${KEY}`,
-// });
-// const openai = new OpenAIApi(configuration);
-
-// // message.content is the prompt that sends to the API
-// const completion = await openai.createChatCompletion({
-//   model: "gpt-3.5-turbo",
-//   messages: [{role: "user", content: "Pretend you are a text adventure game from the 80s, I need all responses to be 1 sentence, short and descriptive. i just stumbled into a room full or riches and a dragon , can you describe it"}],
-// });
-
-// // This is just the response displayed as a string
-// console.log(completion.data.choices[0].message.content);
-
-// The Code below will handle all the fuctionality
-
-/* TODO List:
-
-Get data from the user to create a new player object.
-Start a new game by creating a dungeon instance and passing our created player object into it
-The dungeon will handle the loop
-
-*/
-
-
 
 console.log(`Listening on ${PORT}`);
 

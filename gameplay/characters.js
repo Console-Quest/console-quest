@@ -18,13 +18,13 @@ class Character {
 // Define a Player class that extends the Character class
 class Player extends Character {
   // Define a constructor method that takes a hit points, username, and species parameter
-  constructor(hp, userName, species) {
+  constructor(hp, userName, race) {
     super(Math.max(hp, 0)); // Call the super constructor with the hit points parameter
     this.name = userName; // Set the name property to the given username
-    this.species = species; // Set the species property to the given species name
-    this.baseDmg = 10; // Set the base damage property to the given species damage
-    this.baseCritChance = 0.1; // Set the base crit chance property to the given species crit chance
-    this.baseCritMulti = 1.5; // Set the base crit multiplier property to the given species crit multiplier
+    this.race = race; // Set the race property to the given race name
+    this.baseDmg = 10; // Set the base damage property to the given race damage
+    this.baseCritChance = 0.1; // Set the base crit chance property to the given race crit chance
+    this.baseCritMulti = 1.5; // Set the base crit multiplier property to the given race crit multiplier
     this.maxHp = hp; // Set the max hit points property to the given hit points
   }
 

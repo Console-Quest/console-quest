@@ -12,37 +12,39 @@ const { Dungeon } = require('./gameplay/dungeon.js');
 const { Player, Enemy } = require('./gameplay/characters.js');
 
 
-let player = new Player(10, 'VnGChrome', 'human');
-const runGame = (player) => {
 
+const runGame = (playerInfo) => {
+console.log(`Welcome ${playerInfo.name} To Console Quest`)
   const dungeon = new Dungeon();
 
-  for (let i = 0; i < 20; i++){
-    dungeon.createNewRoom(player);
-  }
-}
-
-runGame(player)
+  do {
+  dungeon.createNewRoom(playerInfo);
+  } while (playerInfo.hp > 0);
+  console.log('You have been slain. GAME OVER');
+  } 
 
 
 
 // The code below is the server connecting the client, this is how I get information back and forth
 
-// const io = new Server(PORT);
-// let playerName = "";
+const io = new Server(PORT);
+let playerName = "";
 
-// io.on("connection", (socket) => {
-//   console.log('New client connected');
+io.on("connection", (socket) => {
+  console.log('New client connected');
   
-//   socket.on('userInput', (data) => {
-//   playerName = data;
-//     // this is where playerName gets updated.
-//   });
+  socket.on('banana', async (data) => {
+   playerName = await data;
+
+  let playerInstance = new Player(10, playerName, 'human');
+runGame(playerInstance)
+    // this is where playerName gets updated.
+  });
   
-//   socket.on('disconnect', () => {
-//     console.log('Client disconnected');
-//   });
-// });
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
 
 
 // The code below is the chat GPT API Need to make this a function

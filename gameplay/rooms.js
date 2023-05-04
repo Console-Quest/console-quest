@@ -17,8 +17,8 @@ class Rooms {
   // Define a method called useAbility that takes a player object as a parameter
   useAbility(player, dungeonLevel) {
     // Log a message indicating that the ability is being used
-    console.log(`Using ${this.roomType} ability...`);
-  
+    console.log(`You discovered a ${this.roomType} room...\n`);
+
     // If the room type is a healing room, restore some of the player's missing health
     if (this.roomType === 'healing') {
       // Calculate the amount of missing health the player has
@@ -27,40 +27,46 @@ class Rooms {
       const restoreHp = Math.floor(missingHp / 2);
       player.hp += restoreHp;
       // Log a message indicating how much health was restored
-      console.log(`Restored ${restoreHp} HP to player ${player.name}.`);
-      console.log(`${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP`)  
+      console.log(`Restored ${restoreHp} HP to player ${player.name}.\n`);
+      console.log(`${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP\n`)
 
-    } 
-  
+    }
+
     // If the room type is a treasure room, select a random reward and apply it to the player
     else if (this.roomType === 'treasure') {
       // Increase the player's base damage by 50%
       const damageBuff = 1.05;
-      player.baseDmg *= damageBuff;
+      player.baseDmg = Math.round(player.baseDmg * damageBuff);
       // Log a message indicating the damage buff
-      console.log(`Increased player ${player.name}'s base damage to ${player.baseDmg}.`);
-    } 
-  
+      console.log(`Increased player ${player.name}'s base damage to ${player.baseDmg}.\n`);
+    }
+
     // If the room type is a monster room, create a new enemy and have it fight the player
     else if (this.roomType === 'monster') {
       // Create a new enemy object with scaled HP and damage based on the dungeon level
-      const enemyHp = Math.ceil(1.05 * this.dungeonLevel);
+      const enemyHp = Math.ceil(1.5 * this.dungeonLevel);
       const enemyDmg = Math.ceil(1.05 * this.dungeonLevel);
       const monster = new Enemy(enemyHp, "Orc", enemyDmg);
       // Log a message indicating that the enemy has appeared
       console.log(`A ${monster.name} appeared!\n`);
 
-      console.log(`${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP\n`)  
-      console.log(`${monster.name}: ${monster.createHealthBar(monster.maxHp)} ${monster.hp}/${monster.maxHp} HP\n`)  
-      
-      console.log(monster)
-      // Begin combat
-      console.log('fight happens here')
-      player.attackEnemy(monster)
-      monster.attackEnemy(player)
+      console.log('You begin combat\n')
+      do {
+        console.log(`${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP\n`)
+        console.log(`${monster.name}: ${monster.createHealthBar(monster.maxHp)} ${monster.hp}/${monster.maxHp} HP\n`)
+        // Begin combat
+        player.attackEnemy(monster)
+        if (monster.hp < 0){
+          console.log('defeated enemy')
+          continue;
+        }
+        monster.attackEnemy(player)  
 
+      } while (player.hp > 0 && monster.hp > 0)
+
+      
     }
-  }  
+  }
 }
 
 // Export the Rooms class

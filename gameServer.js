@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
   socket.on('banana', async (data) => {
     playerName = await data;
     // this is where playerName gets updated.
-    let playerInstance = new Player(10, `${playerName}`, 'human');
+    let playerInstance = new Player(50, `${playerName}`, 'human');
     runGame(playerInstance)
   });
 

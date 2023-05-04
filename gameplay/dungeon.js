@@ -22,6 +22,7 @@ constructor() {
     let roomType;
 
     // Generate a new room type that is different from the previous one
+    console.log('You search for a new room ahead \n')
     do {
       const probability = Math.random();
       if (probability < this.healingRoomChance) {
@@ -31,12 +32,13 @@ constructor() {
         roomType = 'treasure';
       } else {
         roomType = 'monster';
-        this.healingRoomChance += 0.15;
+        this.healingRoomChance += 0.25;
       }
-    } while (roomType === this.previousRoomType || (this.previousRoomType !== 'monster' && roomType !== 'monster')); // Keep generating until the room type is different or a non-monster room type is followed by a monster
+    } while (roomType === this.previousRoomType)
 
     const room = new Rooms(roomType, this.level);
     room.useAbility(player);
+    this.levelUp()
 
     this.previousRoomType = roomType; // Set the previous room type to the current room type
     return room;

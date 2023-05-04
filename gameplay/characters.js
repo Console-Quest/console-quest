@@ -44,7 +44,8 @@ class Player extends Character {
       damage *= this.baseCritMulti;
       console.log("Critical hit!");
     }
-    super.attack(enemy, damage);
+    console.log(`You attack for ${Math.ceil(damage)} hp\n`)
+    super.attack(enemy, Math.ceil(damage));
   }
 
   takeDamage(damage) {
@@ -77,7 +78,7 @@ class Player extends Character {
 // Define an Enemy class that extends the Character class
 class Enemy extends Character {
   constructor(hp, name, baseDmg) {
-    super(hp);
+    super(Math.ceil(hp));
     this.name = name;
     this.baseDmg = baseDmg;
     this.maxHp = hp;
@@ -86,6 +87,7 @@ class Enemy extends Character {
   // Define an attack method that takes a target parameter and reduces the target's hit points by the enemy's base damage
   attackEnemy(enemy) {
     let damage = this.baseDmg;
+    console.log(`You get hit for ${damage} hp\n`)
     enemy.takeDamage(damage)
   }
 

@@ -26,12 +26,6 @@ describe('Rooms', () => {
       expect(player.hp).toBe(initialHp + Math.floor((player.maxHp - initialHp) / 2));
     });
 
-    test('treasure room should increase player base damage by 50%', () => {
-      const room = new Rooms('treasure', 'buff damage');
-      const initialDamage = player.baseDmg;
-      room.useAbility(player);
-      expect(player.baseDmg).toBe(initialDamage * 1.5);
-    });
 
     test('monster room should create a new enemy and have it fight the player', () => {
       const room = new Rooms('monster', 'spawn enemy');

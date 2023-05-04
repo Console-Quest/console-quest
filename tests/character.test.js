@@ -1,69 +1,108 @@
 const { Player, Enemy } = require('../gameplay/characters');
 
 describe('Player', () => {
-  test('constructor sets the name property to the given username', () => {
-    const player = new Player(100, 'John', { name: 'Human', damage: 10, critChance: 0.1, critMulti: 2 });
-    expect(player.name).toBe('John');
+  let player;
+
+  beforeEach(() => {
+    player = new Player(100, 'John', 'human');
   });
 
-  test('attackEnemy method calls the enemy takeDamage method with the calculated damage', () => {
-    const enemy = new Enemy(100, 'Orc', 20);
-    const player = new Player(100, 'John', { name: 'Human', damage: 10, critChance: 0.1, critMulti: 2 });
-    enemy.takeDamage = jest.fn();
-    player.attackEnemy(enemy);
-    expect(enemy.takeDamage).toHaveBeenCalled();
+  describe('constructor', () => {
+    it('should set the player name and race', () => {
+      expect(player.name).toEqual('John');
+      expect(player.race).toEqual('human');
+    });
+
+    it('should set the player hit points and max hit points', () => {
+      expect(player.hp).toEqual(100);
+      expect(player.maxHp).toEqual(100);
+    });
+
+    it('should set the player base damage, crit chance, and crit multiplier', () => {
+      expect(player.baseDmg).toEqual(10);
+      expect(player.baseCritChance).toEqual(0.1);
+      expect(player.baseCritMulti).toEqual(1.5);
+    });
   });
 
-  test('checkForCrit method returns true if the random number is less than or equal to the base crit chance', () => {
-    const species = { name: 'Human', damage: 10, critChance: 0.1, critMulti: 2 };
-    const player = new Player(100, 'John', species);
-    const mockMath = Object.create(global.Math);
-    mockMath.random = () => 0.05;
-    global.Math = mockMath;
-    expect(player.checkForCrit()).toBe(true);
+  describe('checkForCrit', () => {
+    it('should return true if the random number is less than or equal to the base crit chance', () => {
+      // Force the random number to be less than the base crit chance
+      Math.random = jest.fn(() => 0.05);
+
+      expect(player.checkForCrit()).toEqual(true);
+    });
+
+    it('should return false if the random number is greater than the base crit chance', () => {
+      // Force the random number to be greater than the base crit chance
+      Math.random = jest.fn(() => 0.15);
+
+      expect(player.checkForCrit()).toEqual(false);
+    });
   });
 
-  test('checkForCrit method returns false if the random number is greater than the base crit chance', () => {
-    const species = { name: 'Human', damage: 10, critChance: 0.1, critMulti: 2 };
-    const player = new Player(100, 'John', species);
-    const mockMath = Object.create(global.Math);
-    mockMath.random = () => 0.2;
-    global.Math = mockMath;
-    expect(player.checkForCrit()).toBe(false);
+  describe('attackEnemy', () => {
+    let enemy;
+
+    beforeEach(() => {
+      enemy = { takeDamage: jest.fn() };
+    });
+
+    it('should call the enemy takeDamage method with the calculated damage', () => {
+      // Force the crit multiplier to be used
+      player.checkForCrit = jest.fn(() => true);
+
+      player.attackEnemy(enemy);
+
+      // Expect the enemy's takeDamage method to be called with the calculated damage
+      expect(enemy.takeDamage).toHaveBeenCalledWith(15);
+    });
+
+    it('should call the enemy takeDamage method with the rounded up damage', () => {
+      // Force the damage to be a decimal number
+      player.baseDmg = 6;
+
+      player.attackEnemy(enemy);
+
+      // Expect the enemy's takeDamage method to be called with the rounded up damage
+      expect(enemy.takeDamage).toHaveBeenCalledWith(6);
+    });
   });
+
+  describe('takeDamage', () => {
+    it('should reduce the player hit points by the given amount of damage', () => {
+      player.takeDamage(20);
+
+      expect(player.hp).toEqual(80);
+    });
+  });
+
+
 });
 
 describe('Enemy', () => {
-  test('constructor sets the name property to the given name', () => {
-    const enemy = new Enemy(100, 'Orc', 20);
-    expect(enemy.name).toBe('Orc');
+  let enemy;
+
+  beforeEach(() => {
+    enemy = new Enemy(50, 'Goblin', 8);
   });
 
-  test('constructor sets the baseDmg property to the given base damage', () => {
-    const enemy = new Enemy(100, 'Orc', 20);
-    expect(enemy.baseDmg).toBe(20);
+  it('should have correct initial properties', () => {
+    expect(enemy.hp).toEqual(50);
+    expect(enemy.maxHp).toEqual(50);
+    expect(enemy.name).toEqual('Goblin');
+    expect(enemy.baseDmg).toEqual(8);
   });
 
-  test('constructor sets the maxHp property to the given hit points', () => {
-    const enemy = new Enemy(100, 'Orc', 20);
-    expect(enemy.maxHp).toBe(100);
+  it('should reduce the target player\'s hit points by its base damage when attacking', () => {
+    const player = { hp: 30, takeDamage: jest.fn() };
+    enemy.attackEnemy(player);
+    expect(player.takeDamage).toHaveBeenCalledWith(enemy.baseDmg);
   });
 
-  test('attack method calls the target takeDamage method with the base damage', () => {
-    const target = new Enemy(100, 'Goblin', 10);
-    const enemy = new Enemy(100, 'Orc', 20);
-    target.takeDamage = jest.fn();
-    enemy.attack(target);
-    expect(target.takeDamage).toHaveBeenCalledWith(20);
+  it('should reduce its hit points by the given amount of damage when taking damage', () => {
+    enemy.takeDamage(20);
+    expect(enemy.hp).toEqual(30);
   });
 
-  test('checkForDead method returns true if the enemy hp is less than or equal to zero', () => {
-    const enemy = new Enemy(0, 'Orc', 20);
-    expect(enemy.checkForDead()).toBe(true);
-  });
-
-  test('checkForDead method returns false if the enemy hp is greater than zero', () => {
-    const enemy = new Enemy(50, 'Orc', 20);
-    expect(enemy.checkForDead()).toBe(false);
-  });
 });

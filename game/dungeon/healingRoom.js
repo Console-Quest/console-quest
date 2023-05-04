@@ -1,7 +1,7 @@
-import player from './choiceRoom';
+// import player from './choiceRoom';
 
 class HealingRoom {
-    constructor() {
+    constructor(player) {
         this.player = player;
     }
 

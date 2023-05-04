@@ -1,18 +1,20 @@
-import player from './choiceRoom';
+// import player from './choiceRoom';
+
+const buffs = [
+  { type: 'health', value: 5, response: 'You found a Constitution Buff! Health increased by ' },
+  { type: 'minDmg', value: 1, response: 'You found a Swift Buff! Minimum Damage increased by ' },
+  { type: 'maxDmg', value: 1.5, response: 'You found a Power Buff! Maximum Damage increased by ' },
+  { type: 'critChance', value: 0.05, response: 'You found a Accuracy Buff! Critical Chance increased by ' },
+  { type: 'critDmg', value: 0.25, response: 'You found a Deadly Buff! Critical Damage increased by ' },
+];
 
 class TreasureRoom {
-    constructor() {
-      this.buffs = [
-        { type: 'health', value: 5, response: 'You found a Constitution Buff! Health increased by ' },
-        { type: 'minDmg', value: 1, response: 'You found a Swift Buff! Minimum Damage increased by ' },
-        { type: 'maxDmg', value: 1.5, response: 'You found a Power Buff! Maximum Damage increased by ' },
-        { type: 'critChance', value: 0.05, response: 'You found a Accuracy Buff! Critical Chance increased by ' },
-        { type: 'critDmg', value: 0.25, response: 'You found a Deadly Buff! Critical Damage increased by ' },
-      ]
+    constructor(player) {
+        this.player = player;
     }
+    
 
-
-    getRandomBuff = (player) => {
+    getRandomBuff = () => {
         //this.player = new player(player);
 
         // Choose a random buff from buff objects

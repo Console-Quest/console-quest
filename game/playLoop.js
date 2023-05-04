@@ -2,7 +2,7 @@
 // controls choice of room and controls overall flow of game after 'start'
 
 import Player from './user/character';
-import getRoom from './dungeon/choiceRoom';
+import ChoiceRoom from './dungeon/choiceRoom';
 
 
 // curLvl = 1
@@ -29,10 +29,9 @@ class GameLoop {
     
     // main play loop while player has health
     play = (player) => {
-       player.curHealth <= 0 ? playerDeath(player) : console.log('You enter a room. Before you lay two doors, one on the left, and one on the right. Which door do you choode?');
-        // Get user response here
-        getRoom(player);
-        play(player); 
+       player.curHealth <= 0 ? playerDeath(player) : console.log('You enter a room. Before you lay two doors, one on the left, and one on the right. Which door do you choose?');
+        let resultFromRoom = ChoiceRoom(player);
+        play(resultFromRoom); 
     }
 }
 

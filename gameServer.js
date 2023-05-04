@@ -6,6 +6,7 @@ require('dotenv').config();
 const PORT = process.env.PORT || 3001;
 const KEY = process.env.OPENAI_API_KEY
 const ORG = process.env.ORG
+const io = new Server(PORT);
 
 // import our classes here
 const { Dungeon } = require('./gameplay/dungeon.js');
@@ -14,33 +15,39 @@ const { Player, Enemy } = require('./gameplay/characters.js');
 
 
 const runGame = (playerInfo) => {
-console.log(`Welcome ${playerInfo.name} To Console Quest`)
+  console.log(`Welcome ${playerInfo.name} To Console Quest`);
   const dungeon = new Dungeon();
 
   do {
-  dungeon.createNewRoom(playerInfo);
+    // Do something with the answer
+    dungeon.createNewRoom(playerInfo);
   } while (playerInfo.hp > 0);
+
   console.log('You have been slain. GAME OVER');
-  } 
+}
 
 
 
-// The code below is the server connecting the client, this is how I get information back and forth
-
-const io = new Server(PORT);
 let playerName = "";
 
 io.on("connection", (socket) => {
   console.log('New client connected');
-  
-  socket.on('banana', async (data) => {
-   playerName = await data;
+  // The code below is the server connecting the client, this is how I get information back and forth
 
-  let playerInstance = new Player(10, playerName, 'human');
-runGame(playerInstance)
+
+  socket.on('banana', async (data) => {
+    playerName = await data;
     // this is where playerName gets updated.
+    let playerInstance = new Player(10, `${playerName}`, 'human');
+    runGame(playerInstance)
   });
-  
+
+  // Listen for the client's answer to the question
+  socket.on('answer', (data) => {
+    console.log(`Received answer "${data}" from client`);
+  });
+
+
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });

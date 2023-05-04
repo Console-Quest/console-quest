@@ -28,13 +28,14 @@ class Rooms {
       player.hp += restoreHp;
       // Log a message indicating how much health was restored
       console.log(`Restored ${restoreHp} HP to player ${player.name}.`);
-      console.log(`Player has ${player.hp} left`)
+      console.log(`${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP`)  
+
     } 
   
-    // If the room type is a treasure room, buff the player's base damage
+    // If the room type is a treasure room, select a random reward and apply it to the player
     else if (this.roomType === 'treasure') {
       // Increase the player's base damage by 50%
-      const damageBuff = 1.5;
+      const damageBuff = 1.05;
       player.baseDmg *= damageBuff;
       // Log a message indicating the damage buff
       console.log(`Increased player ${player.name}'s base damage to ${player.baseDmg}.`);
@@ -52,13 +53,8 @@ class Rooms {
       // Begin combat
       console.log('fight happens here')
       player.takeDamage(2)
-      console.log(player.createHealthBar(player.maxHp))
-      console.log(`player has ${player.hp} remaining`)
-  
-      // If the player is dead, log a message indicating that the player lost
-      if (player.isDead) {
-        console.log(`Player ${player.name} was defeated by ${monster.name}!`);
-      }
+
+      console.log(`${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP`)  
     }
   }  
 }

@@ -1,8 +1,8 @@
 // Define a Character class with a constructor method that takes a hit points parameter
 class Character {
   constructor(hp) {
-    this.hp = hp; // Set the hit points property to the given value
-    this.isDead = false;
+    this.hp = Math.max(hp, 0); // Set the hit points property to the given value
+
   }
 
   // Define an attack method that takes a target and damage parameter and calls the target's takeDamage method
@@ -19,7 +19,7 @@ class Character {
 class Player extends Character {
   // Define a constructor method that takes a hit points, username, and species parameter
   constructor(hp, userName, species) {
-    super(hp); // Call the super constructor with the hit points parameter
+    super(Math.max(hp, 0)); // Call the super constructor with the hit points parameter
     this.name = userName; // Set the name property to the given username
     this.species = species; // Set the species property to the given species name
     this.baseDmg = 10; // Set the base damage property to the given species damage

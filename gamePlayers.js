@@ -9,12 +9,6 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-rl.question('Please enter your name: ', (answer) => {
-  const userData = answer;
-  console.log(`You entered: ${userData}`);
-  socket.emit('banana', userData); // emit event with user's input
-  rl.close();
-});
 
 
 socket.on('connect', () => {
@@ -25,6 +19,18 @@ socket.on('disconnect', () => {
   console.log('Disconnected from server');
 });
 
-console.log();
+socket.once('question', (message) => {
+  // Prompt the user for a choice
+  rl.prompt(message, (userChoice) => {
+    // Send the userChoice to the server
+    socket.emit('answer', userChoice);
+  });
+});
 
 
+rl.question('Please enter your name: ', (answer) => {
+  const userData = answer;
+  console.log(`You entered: ${userData}`);
+  socket.emit('banana', userData); // emit event with user's input
+  rl.close();
+});

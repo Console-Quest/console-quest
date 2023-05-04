@@ -23,7 +23,7 @@ const runGame = (playerInfo) => {
     dungeon.createNewRoom(playerInfo);
   } while (playerInfo.hp > 0);
 
-  console.log('You have been slain. GAME OVER');
+  console.log('Your enemy delivers a fatal blow. GAME OVER');
 }
 
 
@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
   socket.on('banana', async (data) => {
     playerName = await data;
     // this is where playerName gets updated.
-    let playerInstance = new Player(50, `${playerName}`, 'human');
+    let playerInstance = new Player(100, `${playerName}`, 'human');
     runGame(playerInstance)
   });
 

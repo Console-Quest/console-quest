@@ -57,7 +57,7 @@ class Rooms {
         // Begin combat
         player.attackEnemy(monster)
         if (monster.hp < 0){
-          console.log('defeated enemy')
+          console.log('With a swift Strike, you defeat your enemy\n')
           continue;
         }
         monster.attackEnemy(player)  

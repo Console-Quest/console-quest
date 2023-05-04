@@ -66,13 +66,6 @@ class Player extends Character {
     return healthBar;
   }
 
-  checkForDead() {
-    if (this.hp === 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 }
 
 // Define an Enemy class that extends the Character class
@@ -108,15 +101,6 @@ class Enemy extends Character {
     return healthBar;
   }
 
-
-  // Define a checkForDead method that returns true if the enemy's hit points are less than or equal to zero
-  checkForDead() {
-    if (this.hp <= 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 }
 
 // Export the Enemy and Player classes

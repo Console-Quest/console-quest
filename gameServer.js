@@ -46,15 +46,16 @@ const { Player, Enemy } = require('./gameplay/characters.js');
 
 // Define a function that runs the game with a given player and welcome message
 const runGame = (playerInfo, welcomeMessage, socket) => {
-  console.log(welcomeMessage + '\n');
+  socket.emit('message', welcomeMessage + '\n');
   
   const dungeon = new Dungeon(getCompletion);
 
   const getNextRoom = () => {
+    socket.emit('message',`Ahead of you lies a door to the right and a door to the left. Which do you choose? \n`)
     if (playerInfo.hp > 0) {
-      socket.emit('question', 'Do you want to go through the left door or the right door? (Type "left" or "right")');
+      socket.emit('question', '(Type "left" or "right")');
     } else {
-      console.log('Your enemy delivers a fatal blow. GAME OVER');
+      socket.emit('message', 'Your enemy delivers a fatal blow. GAME OVER');
     }
   }
 
@@ -62,7 +63,7 @@ const runGame = (playerInfo, welcomeMessage, socket) => {
     console.log(`Received answer "${data}" from client`);
     if (data === 'left' || data === 'right') {
       socket.emit('message', `You chose the ${data} door.`);
-      dungeon.createNewRoom(playerInfo);
+      dungeon.createNewRoom(playerInfo, socket);
       getNextRoom();
     } else {
       socket.emit('message', 'Invalid choice, please type "left" or "right".');
@@ -72,6 +73,7 @@ const runGame = (playerInfo, welcomeMessage, socket) => {
 
   getNextRoom();
 }
+
 
 
 // Define a variable to store the player name
@@ -84,7 +86,7 @@ io.on("connection", (socket) => {
   // Listen for the 'banana' event and update the playerName variable with the received data
   socket.on('banana', async (data) => {
   playerName = await data;
-  let playerInstance = new Player(100, `${playerName}`, 'human', getCompletion);
+  let playerInstance = new Player(100, `${playerName}`, 'human', socket);
   let message = `Pretend you're a text adventure game from the 80's, in one sentence, welcome our new ${playerInstance.race} by the name of ${playerInstance.name} to the world of Console Quest. They start the adventure approaching a dungeon and they run quickly inside, describe this.`
 
   // Call the getCompletion function to generate a welcome message and then run the game with the generated message
@@ -96,13 +98,12 @@ io.on("connection", (socket) => {
 
   // Listen for the 'answer' event and log the received data
   socket.on('answer', (data) => {
-    console.log(`Received answer "${data}" from client`);
+    // console.log(`Received answer "${data}" from client`);
     if (data === 'left' || data === 'right') {
-      console.log(`You chose the ${data} door.`)
       socket.emit('message', `You chose the ${data} door.`);
     } else {
       socket.emit('message', 'Invalid choice, please type "left" or "right".');
-      socket.emit('question', 'Do you want to go through the left door or the right door? (Type "left" or "right")');
+      socket.emit('question', '(Type "left" or "right")');
     }
   });
 

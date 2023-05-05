@@ -1,7 +1,7 @@
 'use strict';
 // Import the required libraries and modules
 const { io } = require("socket.io-client");
-const SERVER_URL = process.env.SERVER_URL || 'http://localhost:3001';
+const SERVER_URL = process.env.SERVER_URL || 'http://localhost:3001/';
 const socket = io(SERVER_URL);
 const readline = require('node:readline');
 
@@ -22,12 +22,15 @@ socket.on('disconnect', () => {
 });
 
 // Listen for the 'question' event from the server, and only handle it once
-socket.once('question', (message) => {
+socket.on('question', (message) => {
   // Prompt the user for a choice using the received message
-  rl.prompt(message, (userChoice) => {
+  rl.question(message, (userChoice) => {
     // Send the user's choice back to the server using the 'answer' event
     socket.emit('answer', userChoice);
   });
+});
+socket.on('message', (data) => {
+  console.log(data);
 });
 
 // Ask the user for their name and process the input
@@ -37,5 +40,5 @@ rl.question('Please enter your name: ', (answer) => {
   // Emit the 'banana' event to the server with the user's input (name)
   socket.emit('banana', userData);
   // Close the readline interface
-  rl.close();
+  // rl.close();
 });

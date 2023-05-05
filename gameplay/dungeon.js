@@ -21,7 +21,6 @@ class Dungeon {
   }
 
   getUserRoomChoice(player) {
-    console.log('You continue forward to find two doors, one on the left, and one on the right. Which door do you choose? \n')
     // Get user LEFT/RIGHT choice here
     this.createNewRoom(player)
   }

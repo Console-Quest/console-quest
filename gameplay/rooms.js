@@ -1,4 +1,6 @@
 const { Enemy } = require('./characters')
+//const { getCompletion } = require('../gameServer.js');
+
 // Define a function for combat
 
 
@@ -25,9 +27,9 @@ class Rooms {
     // If the room type is a healing room, restore some of the player's missing health
     if (this.roomType === 'healing') {
       // Calculate the amount of missing health the player has
-      const missingHp = player.maxHp - player.hp;
+      let missingHp = player.maxHp - player.hp;
       // Restore half of the missing health to the player
-      const restoreHp = Math.floor(missingHp / 2);
+      let restoreHp = Math.floor(missingHp / 2);
       player.hp += restoreHp;
       // Log a message indicating how much health was restored
       socket.emit('message', `Restored ${restoreHp} HP to player ${player.name}.\n`);
@@ -39,8 +41,8 @@ class Rooms {
     else if (this.roomType === 'treasure') {
 // Define an array of buffs
 const buffs = [
-  { type: "damage", value: 0.05, property: "baseDmg" }, // Increase base damage by 50%
-  { type: "crit", value: 0.01, property: "critChance" }, // Increase critical strike chance by 10%
+  { type: "damage", value: 0.025, property: "baseDmg" }, // Increase base damage by 25%
+  { type: "crit", value: 0.05, property: "critChance" }, // Increase critical strike chance by 5%
   { type: "maxHp", value: 0.05, property: "maxHp"} 
 ];
 
@@ -56,48 +58,50 @@ player[property] += value * player[property];
 
 // Log a message indicating the buff
 socket.emit('message', `Increased ${player.name}'s ${property} by ${value * 100}%!\n`);
-console.log(`You collect you treasure and move on... \n`);
+socket.emit('message', `You collect you treasure and move on... \n`);
+socket.emit('message', ` \n`);
 
 
       // If the room type is a monster room, create a new enemy and have it fight the player
     } else if (this.roomType === 'monster') {
       // Create a new enemy object with scaled HP and damage based on the dungeon level
-      const enemyHp = Math.ceil(1.25 * this.dungeonLevel);
-      const enemyDmg = Math.ceil(1.05 * this.dungeonLevel);
+      const enemyHp = Math.ceil(1.05 * this.dungeonLevel);
+      const enemyDmg = Math.ceil(1.01 * this.dungeonLevel);
       const monsterTypes = [
-        { type: "Goblin", dmgMin: 1, dmgMax: 3, health: 5, description: "A snarling goblin blocks your path." },
-        { type: "Orc", dmgMin: 2, dmgMax: 5, health: 10, description: "An orc with a wicked grin greets you." },
-        { type: "Troll", dmgMin: 4, dmgMax: 8, health: 20, description: "A towering troll stares down at you." },
-        { type: "Skeleton", dmgMin: 1, dmgMax: 4, health: 5, description: "A clattering skeleton stands before you." },
-        { type: "Zombie", dmgMin: 2, dmgMax: 5, health: 5, description: "A putrid zombie lurches towards you." },
-        { type: "Ghoul", dmgMin: 3, dmgMax: 7, health: 5, description: "A ghoul with glowing eyes shambles towards you." },
-        { type: "Mummy", dmgMin: 4, dmgMax: 9, health: 10, description: "A bandaged mummy hisses at you." },
-        { type: "Vampire", dmgMin: 5, dmgMax: 10, health: 15, description: "A suave vampire appears before you, baring its fangs." },
-        { type: "Werewolf", dmgMin: 6, dmgMax: 12, health: 20, description: "A snarling werewolf leaps out from the shadows." },
-        { type: "Giant Spider", dmgMin: 3, dmgMax: 7, health: 15, description: "A hairy spider with multiple eyes dangles from the ceiling." },
-        { type: "Slime", dmgMin: 1, dmgMax: 3, health: 15, description: "A glob of slime oozes towards you." },
-        { type: "Ghost", dmgMin: 2, dmgMax: 6, health: 10, description: "A wispy ghost floats towards you, moaning softly." },
-        { type: "Demon", dmgMin: 8, dmgMax: 15, health: 30, description: "A fearsome demon emerges from the shadows, its eyes glowing red." }
+        { type: "Goblin", dmgMin: 3, dmgMax: 3, health: 30, description: "A snarling goblin blocks your path.\n" },
+        { type: "Orc", dmgMin: 2, dmgMax: 5, health: 75, description: "An orc with a wicked grin greets you.\n" },
+        { type: "Troll", dmgMin: 5, dmgMax: 8, health: 120, description: "A towering troll stares down at you.\n" },
+        { type: "Skeleton", dmgMin: 3, dmgMax: 4, health: 50, description: "A clattering skeleton stands before you.\n" },
+        { type: "Zombie", dmgMin: 5, dmgMax: 5, health: 50, description: "A putrid zombie lurches towards you.\n" },
+        { type: "Ghoul", dmgMin: 3, dmgMax: 7, health: 40, description: "A ghoul with glowing eyes shambles towards you.\n" },
+        { type: "Mummy", dmgMin: 4, dmgMax: 9, health: 50, description: "A bandaged mummy hisses at you.\n" },
+        { type: "Vampire", dmgMin: 7, dmgMax: 10, health: 80, description: "A suave vampire appears before you, baring its fangs.\n" },
+        { type: "Werewolf", dmgMin: 6, dmgMax: 12, health: 100, description: "A snarling werewolf leaps out from the shadows.\n" },
+        { type: "Giant Spider", dmgMin: 5, dmgMax: 7, health: 80, description: "A hairy spider with multiple eyes dangles from the ceiling.\n" },
+        { type: "Slime", dmgMin: 3, dmgMax: 3, health: 85, description: "A glob of slime oozes towards you.\n" },
+        { type: "Ghost", dmgMin: 2, dmgMax: 6, health: 20, description: "A wispy ghost floats towards you, moaning softly.\n" },
+        { type: "Demon", dmgMin: 15, dmgMax: 15, health: 150, description: "A fearsome demon emerges from the shadows, its eyes glowing red.\n" }
       ];
 
       // Select a random creature from the array
-      const randomCreature = monsterTypes[Math.floor(Math.random() * monsterTypes.length)]
+      const randomCreature = monsterTypes[Math.floor(Math.random() * monsterTypes.length)];
 
       // Create the enemy object using the selected creature's stats
-      const monster = new Enemy(enemyHp, randomCreature.type, enemyDmg, randomCreature.description)
+      const monster = new Enemy(Math.ceil(enemyHp * randomCreature.health), randomCreature.type, Math.ceil(enemyDmg * randomCreature.dmgMin), randomCreature.description);
       socket.emit('message', monster.description);
 
-      socket.emit('message', `---------- START COMBAT ----------\n`)
+      socket.emit('message', `---------- START COMBAT ----------\n`);
       do {
         socket.emit('message', `${player.name}: ${player.createHealthBar(player.maxHp)} ${player.hp}/${player.maxHp} HP\n`)
         socket.emit('message', `${monster.name}: ${monster.createHealthBar(monster.maxHp)} ${monster.hp}/${monster.maxHp} HP\n`)
         // Begin combat
-        player.attackEnemy(monster, socket)
+        player.attackEnemy(monster, socket);
         if (monster.hp < 0) {
-          socket.emit('message', `You have slain the `+(monster.name)+'\n')
+          console.log(`---------- VICTORY ----------\n`);
+          socket.emit('message', `You have slain the `+(monster.name)+'!\n You continue on... \n');
           continue;
         }
-        monster.attackEnemy(player, socket)
+        monster.attackEnemy(player, socket);
 
       } while (player.hp > 0 && monster.hp > 0)
     }

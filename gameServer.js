@@ -1,11 +1,10 @@
 'use strict'
 
-// Import necessary packages and environment variables
+/// Import necessary packages and environment variables
 const { Server } = require("socket.io");
 require('dotenv').config();
 const PORT = process.env.PORT || 3001;
-const KEY = process.env.OPENAI_API_KEY
-const ORG = process.env.ORG
+const { getCompletion } = require("./openaiHelper");
 const io = new Server(PORT);
 
 // Import OpenAI API and configure it using environment variables
@@ -14,31 +13,11 @@ const Bottleneck = require('bottleneck');
 const limiter = new Bottleneck({ minTime: 1000 }); // 1000ms between requests
 
 const configuration = new Configuration({
-    organization: `${ORG}`,
-    apiKey: `${KEY}`,
+    organization: `${process.env.ORG}`,
+    apiKey: `${process.env.OPENAI_API_KEY}`,
 });
 const openai = new OpenAIApi(configuration);
 const cache = new Map();
-
-// Define an async function that takes a message and returns a chatbot response using OpenAI API
-async function getCompletion(message) {
-  if (cache.has(message)) {
-    return cache.get(message);
-  }
-
-  const completion = await limiter.schedule(async () => {
-    return await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: `${message}` }],
-    });
-  });
-
-  const result = completion.data.choices[0].message.content;
-  cache.set(message, result);
-
-  return result;
-}
-
 
 // Import classes from other modules
 const { Dungeon } = require('./gameplay/dungeon.js');
@@ -48,12 +27,12 @@ const { Player, Enemy } = require('./gameplay/characters.js');
 const runGame = (playerInfo, welcomeMessage, socket) => {
   socket.emit('message', welcomeMessage + '\n');
   
-  const dungeon = new Dungeon(getCompletion);
+  const dungeon = new Dungeon();
 
   const getNextRoom = () => {
     socket.emit('message',`Ahead of you lies a door to the right and a door to the left. Which do you choose? \n`)
     if (playerInfo.hp > 0) {
-      socket.emit('question', '(Type "left" or "right")');
+      socket.emit('question', '(Type "left" or "right"): \n');
     } else {
       socket.emit('message', 'Your enemy delivers a fatal blow. GAME OVER');
     }
@@ -62,11 +41,11 @@ const runGame = (playerInfo, welcomeMessage, socket) => {
   socket.on('answer', (data) => {
     console.log(`Received answer "${data}" from client`);
     if (data === 'left' || data === 'right') {
-      socket.emit('message', `You chose the ${data} door.`);
+      socket.emit('message', `You chose the ${data} door.\n`);
       dungeon.createNewRoom(playerInfo, socket);
       getNextRoom();
     } else {
-      socket.emit('message', 'Invalid choice, please type "left" or "right".');
+      socket.emit('message', 'Invalid choice, please type "left" or "right".\n');
       getNextRoom();
     }
   });
@@ -116,5 +95,5 @@ io.on("connection", (socket) => {
 // Log the port number the server is listening on
 console.log(`Listening on ${PORT}`);
 
-module.exports = { runGame: runGame, getCompletion };
+module.exports = { runGame: runGame};
 

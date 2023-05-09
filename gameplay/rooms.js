@@ -3,7 +3,9 @@ const { getCompletion } = require("../openaiHelper.js");
 const chalk = require("chalk");
 
 // Define a function for combat
-
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 // Define a class called Rooms
 class Rooms {
   // Define a constructor method that takes a type, ability, and dungeon level as parameters
@@ -199,65 +201,68 @@ class Rooms {
       socket.emit("message", generatedMessage);
   
       // If the room type is a monster room, create a new enemy and have it fight the player
-    } else if (this.roomType === "monster") {
-      // Create a new enemy object with scaled HP and damage based on the dungeon level
-      let monster = this.createMonster();
-      socket.emit("message", monster.description);
-  
+    
+  } else if (this.roomType === "monster") {
+    // ... rest of the code ...
+    socket.emit(
+      "message",
+      `${chalk.red(`---------- START COMBAT ----------`)}\n`
+    );
+    socket.emit("message", monster.description);
+
+
+    // Use the sleep function here with async/await
+    await sleep(1000);
+
+    // Modify the combat loop to use async/await
+    while (player.hp > 0 && monster.hp > 0) {
       socket.emit(
         "message",
-        `${chalk.red("---------- START COMBAT ----------")}\n`
+        `${player.name}: ${player.createHealthBar(
+          player.maxHp
+        )} ${player.hp}/${player.maxHp} HP\n`
       );
-  
-      setTimeout(async () => {
-        do {
-          socket.emit(
-            "message",
-            `${chalk.green(player.name)}: ${player.createHealthBar(
-              player.maxHp
-            )} ${player.hp}/${player.maxHp} HP\n`
-          );
-          socket.emit(
-            "message",
-            `${chalk.red(monster.name)}: ${monster.createHealthBar(
-              monster.maxHp
-            )} ${monster.hp}/${monster.maxHp} HP\n`
-          );
-          // Begin combat
-          await player.attackEnemy(monster, socket); // Use the provided monster
-          if (monster.hp <= 0) {
-            socket.emit(
-              "message",
-              `${chalk.green("---------- VICTORY ----------")}\n`
-            );
-            socket.emit(
-              "message",
-              `${chalk.green(`You have slain the `)}${chalk.red(
-                monster.name
-              )}${chalk.green("!")} ${chalk.yellow("You continue on...")}\n`
-            );
-            break; // Exit the combat loop when the monster is defeated
-          }
-          await monster.attackEnemy(player, socket);
-        } while (player.hp > 0 && monster.hp > 0);
-      
-        // After the combat is finished, log the player and monster's remaining health
+      socket.emit(
+        "message",
+        `${monster.name}: ${monster.createHealthBar(
+          monster.maxHp
+        )} ${monster.hp}/${monster.maxHp} HP\n`
+      );
+      // Begin combat
+      await player.attackEnemy(monster, socket);
+      if (monster.hp <= 0) {
         socket.emit(
           "message",
-          `${chalk.green(player.name)}: ${player.createHealthBar(
-            player.maxHp
-          )} ${player.hp}/${player.maxHp} HP\n`
+          `${chalk.green(`---------- VICTORY ----------`)}\n`
         );
         socket.emit(
           "message",
-          `${chalk.red(monster.name)}: ${monster.createHealthBar(
-            monster.maxHp
-          )} ${monster.hp}/${monster.maxHp} HP\n`
+          `${chalk.green("You have slain the ")}${chalk.red(monster.name)}${chalk.green("!")} ${chalk.yellow("You continue on...")}\n`
         );
-      }, 1000); // Add a 1000ms (1 second) delay before emitting the health bar messages
-      
-    }}
-  
+        break; // Exit the combat loop when the monster is defeated
+      }
+      await monster.attackEnemy(player, socket);
+    }
+
+    // After the combat is finished, log the player and monster's remaining health
+    // message",
+    //     `${chalk.green("Restored")} ${restoreHp} HP to player ${chalk.yellow(
+    //       player.name
+    //     )}.\n`
+    socket.emit(
+      "message",
+      `${chalk.green(player.name)}: ${player.createHealthBar(
+        player.maxHp
+      )} ${player.hp}/${player.maxHp} HP)\n`
+    );
+    socket.emit(
+      "message",
+      `${chalk.red(monster.name)}: ${monster.createHealthBar(
+        monster.maxHp
+      )} ${monster.hp}/${monster.maxHp} HP\n`
+    );
+  }
+}
 }
 
 // Export the Rooms class

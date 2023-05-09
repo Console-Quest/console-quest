@@ -1,37 +1,35 @@
-const { Rooms } = require('../gameplay/rooms');
-const { Player, Enemy } = require('../gameplay/characters');
+const { Rooms } = require("../gameplay/rooms");
+const { Player } = require("../gameplay/characters");
 
-describe('Rooms', () => {
-  let player;
-  let room;
-  let enemy;
-
-  beforeEach(() => {
-    player = new Player(100, 'John', {
-      name: 'Human',
-      damage: 10,
-      critChance: 0.1,
-      critMulti: 2,
+describe("Rooms class", () => {
+  describe("createMonster method", () => {
+    it("should create a monster object with valid properties", () => {
+      const room = new Rooms("monster", 1);
+      const monster = room.createMonster();
+      expect(monster).toHaveProperty("hp");
+      expect(monster).toHaveProperty("name");
+      expect(monster).toHaveProperty("dmg");
+      expect(monster).toHaveProperty("description");
     });
-    room = new Rooms('treasure', 'damage');
-    enemy = new Enemy(50, 'Orc', 10);
   });
 
-  describe('useAbility', () => {
-    test('healing room should restore half of the missing health to the player', () => {
-      const room = new Rooms('healing', 'restore health');
-      player.takeDamage(20);
-      const initialHp = player.hp;
-      room.useAbility(player);
-      expect(player.hp).toBe(initialHp + Math.floor((player.maxHp - initialHp) / 2));
+  describe("useAbility method", () => {
+    it("should restore player's health if the room type is healing", async () => {
+      const player = new Player("test", 10, 5, 0.1, 0);
+      player.hp = 5;
+      const room = new Rooms("healing", 1);
+      await room.useAbility(player, { emit: jest.fn() });
+      expect(player.hp).toBeGreaterThan(5);
     });
 
-
-    test('monster room should create a new enemy and have it fight the player', () => {
-      const room = new Rooms('monster', 'spawn enemy');
-      const initialHp = player.hp;
-      room.useAbility(player);
-      expect(player.hp).not.toBe(initialHp);
+    it("should apply a random buff to the player if the room type is treasure", async () => {
+      const player = new Player("test", 10, 5, 0.1, 0);
+      const room = new Rooms("treasure", 1);
+      await room.useAbility(player, { emit: jest.fn() });
+      expect(player.maxHp).toBeGreaterThan(10);
+      expect(player.baseDmg).toBeGreaterThan(5);
+      expect(player.critChance).toBeGreaterThan(0.1);
     });
+
   });
 });

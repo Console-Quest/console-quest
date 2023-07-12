@@ -18,7 +18,7 @@ The client-side code displays the game world and handles player input. When the 
 
 ## Usage
 
-1. Start the server by running node index.js in the terminal.
+1. Start the server by running node gameServer.js in the terminal.
 2. In a separate terminal window, run node gamePlayers.js.
 3. Enter your name in the gamePlayers console.
 4. The game loop will start on the server, and you will be prompted to choose your attack type and target enemy.
